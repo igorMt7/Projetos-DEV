@@ -1,0 +1,26 @@
+esconder botão de REALIZAR CHAMADA quando EVENTO ainda não estiver salvo, exibir apenas no EDITAR EVENTO.
+
+Right overflowed by xx pixels
+
+DATEPICKER nos campos DATA.
+
+solucionar a passagem de dados dos ON TAP para marcar apenas por INDEX/ID e enviando ao BD.
+
+
+adicionar campo "ativo/encerrado?" ao evento para poder filtrar eventos na EVENTO_LISTA, trazendo apenas ativos.
+
+
+Criar segunda tela de EVENTOS PASSADOS que permite recuperar dados ou editar eles, mostrando quem foi chamado na ocasião.
+
+como salvar BOOL no BD, como salvar DATETIME no BD.
+
+criar relatórios basicos.
+
+
+-------------------- 2ª etapa
+
+CRIAR TIPOS DE EVENTOS
+
+ou botão CRIAR META + % de meta para acompanhar.
+
+ES_PRODUTO + Entrada básica.

@@ -1,0 +1,44 @@
+1 - Cadastro de assistidos (CRUD)
+
+CPF - Chave primária (devida necessidade).
+
+Nome completo
+
+Endereço.
+
+Numero de dependentes
+
+Emprego fixo?
+
+telefone
+
+email 
+
+tamanho de roupa
+
+
+
+2 - Relatórios básicos:
+
+Maior frequência.
+
+Menor frequência.
+
+Numero de dependentes.
+
+Média de presentes.
+
+Ordenado por tamanho de roupa
+
+
+3 - Sugestão
+
+Metas + Inventario por campanha
+
+
+------------
+
+funções extra:
+
+Backup do BD/Sincronia conta
+
