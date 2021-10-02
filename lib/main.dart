@@ -30,7 +30,7 @@ class PartilheApp extends StatelessWidget {
           textTheme: ButtonTextTheme.accent,
         ),
       ),
-      home: Dashboard(),
+      /*  home: Dashboard(), */
       navigatorKey: AppRouter.chaveDeNavegacao,
       onGenerateRoute: AppRouter.gerarRotas,
       initialRoute: rotaDashboard,

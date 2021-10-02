@@ -12,6 +12,7 @@ class ListaAssistidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _store = CadastrosStore();
+    MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastros"),
@@ -30,6 +31,7 @@ class ListaAssistidos extends StatelessWidget {
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
+        // ignore: deprecated_member_use
         foregroundColor: Theme.of(context).accentColor,
       ),
       body: FutureBuilder(
@@ -84,8 +86,12 @@ class ListaAssistidos extends StatelessWidget {
                             )),
                         Text(store.cadastros[index].telefone ?? "",
                             style: TextStyle(fontSize: 17)),
-                        Text(store.cadastros[index].endereco ?? "",
-                            style: TextStyle(fontSize: 11)),
+                        Wrap(
+                          children: [
+                            Text(store.cadastros[index].endereco ?? "",
+                                style: TextStyle(fontSize: 11))
+                          ],
+                        ),
                       ],
                     )),
                 IconButton(
