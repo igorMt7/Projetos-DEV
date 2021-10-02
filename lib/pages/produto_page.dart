@@ -80,7 +80,8 @@ class _ProdutoPageState extends State<ProdutoPage> {
                     ),
                   ),
                   onTap: () {
-                    ImagePicker.pickImage(source: ImageSource.gallery)
+                    ImagePicker()
+                        .pickImage(source: ImageSource.gallery)
                         .then((file) {
                       if (file == null) return;
                       setState(() {

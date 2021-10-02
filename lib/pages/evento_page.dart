@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:partilhe/helpers/value_objects/bool_value_object.dart';
+import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:partilhe/pages/chamada_lista.dart';
-import 'package:partilhe/pages/evento_lista.dart';
 
 class EventoPage extends StatefulWidget {
   final Evento evento;
@@ -18,11 +19,9 @@ class _EventoPageState extends State<EventoPage> {
   final _nomeController = TextEditingController();
   final _responsavelController = TextEditingController();
   final _descricaoController = TextEditingController();
-  final _dataController = TextEditingController();
   final _nomeFocus = FocusNode();
   final _responsavelFocus = FocusNode();
   final _descricaoFocus = FocusNode();
-  final _dataFocus = FocusNode();
 
   bool editado = false;
   Evento _editaEvento;
@@ -32,19 +31,27 @@ class _EventoPageState extends State<EventoPage> {
     super.initState();
 
     if (widget.evento == null) {
-      _editaEvento = Evento('', '', '', '', null);
+      _editaEvento = Evento(
+        nome: '',
+        responsavel: '',
+        descricao: '',
+        data: DateTimeValueObject.now(),
+        imagem: null,
+        ativo: BoolValueObject.fromBool(true),
+      );
     } else {
       _editaEvento = Evento.fromMap(widget.evento.toMap());
 
       _nomeController.text = _editaEvento.nome;
       _responsavelController.text = _editaEvento.responsavel;
       _descricaoController.text = _editaEvento.descricao;
-      _dataController.text = _editaEvento.data;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
@@ -65,7 +72,7 @@ class _EventoPageState extends State<EventoPage> {
           },
           child: Icon(Icons.save),
           backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).accentColor,
+          foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
         body: SingleChildScrollView(
             padding: EdgeInsets.all(10.0),
@@ -84,7 +91,8 @@ class _EventoPageState extends State<EventoPage> {
                     ),
                   ),
                   onTap: () {
-                    ImagePicker.pickImage(source: ImageSource.gallery)
+                    ImagePicker()
+                        .pickImage(source: ImageSource.gallery)
                         .then((file) {
                       if (file == null) return;
                       setState(() {
@@ -128,19 +136,65 @@ class _EventoPageState extends State<EventoPage> {
                     );
                   },
                 ),
-                TextField(
-                  controller: _dataController,
-                  focusNode: _dataFocus,
-                  decoration: InputDecoration(labelText: "Data"),
-                  onChanged: (text) {
-                    editado = true;
-                    setState(() {
-                      _editaEvento.data = text;
-                    });
-                  },
-                  keyboardType: TextInputType.number,
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      showDatePicker(
+                        context: context,
+                        initialDate:
+                            _editaEvento.data?.toDateTime ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                        fieldLabelText: 'Vencimento',
+                        builder: (BuildContext context, Widget child) {
+                          return Theme(
+                            data: ThemeData.light(),
+                            child: child,
+                          );
+                        },
+                      ).then((value) {
+                        if (value != null &&
+                            _editaEvento.data?.toDateTime != value) {
+                          setState(() {
+                            _editaEvento.data = DateTimeValueObject.fromDate(
+                                value,
+                                withoutTime: true);
+                          });
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: screenSize.width * .5,
+                      child: Card(
+                        elevation: 2,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today_sharp,
+                                    color: Colors.black87,
+                                  ),
+                                  Container(
+                                    child: const Text('Data'),
+                                    alignment: Alignment.centerLeft,
+                                  ),
+                                ],
+                              ),
+                              Text(_editaEvento.data?.toShortStringDateTime ??
+                                  'Data não definida'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
@@ -160,12 +214,8 @@ class _EventoPageState extends State<EventoPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.task_alt,
-                              color: Colors.white,
-                              size: 24,
-                            ),
+                          children: const <Widget>[
+                            Icon(Icons.task_alt, color: Colors.white, size: 24),
                             Text(
                               'Realizar Chamada',
                               style: TextStyle(

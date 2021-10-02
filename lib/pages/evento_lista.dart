@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:partilhe/helpers/dataBase_helper.dart';
+import 'package:partilhe/helpers/database/database_helper.dart';
 
 import 'package:partilhe/models/evento.dart';
 
@@ -84,14 +84,14 @@ class _ListaEventos extends State<ListaEventos> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(eventos[index].nome ?? "",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             )),
-                        Text(eventos[index].data ?? "",
-                            style: TextStyle(fontSize: 17)),
+                        Text(eventos[index].data?.toShortStringDateTime ?? "",
+                            style: const TextStyle(fontSize: 17)),
                         Text(eventos[index].responsavel ?? "",
-                            style: TextStyle(fontSize: 11)),
+                            style: const TextStyle(fontSize: 11)),
                       ],
                     )),
                 IconButton(

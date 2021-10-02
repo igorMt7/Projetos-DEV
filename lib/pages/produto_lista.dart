@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:partilhe/helpers/dataBase_helper.dart';
+import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/produto.dart';
 import 'package:flutter/material.dart';
 import 'package:partilhe/pages/produto_page.dart';

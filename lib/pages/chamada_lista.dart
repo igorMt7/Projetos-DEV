@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:partilhe/helpers/dataBase_helper.dart';
+import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/cadastro.dart';
 
 class Chamada extends StatefulWidget {

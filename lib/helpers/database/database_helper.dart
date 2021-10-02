@@ -29,6 +29,7 @@ class DatabaseHelper {
   String chamadas = 'chamadas';
   String colIdCadastro = 'idCadastro';
   String colIdEvento = 'idEvento';
+  String colAtivo = 'ativo';
 
   //construtor nomeado para criar instância da classe
   DatabaseHelper._createInstance();
@@ -52,26 +53,39 @@ class DatabaseHelper {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = directory.path + 'partlhe.db';
 
-    var cadastrosDatabase = await openDatabase(path,
-        version: 2,
-        onDowngrade: onDatabaseDowngradeDelete,
-        onCreate: _createDb);
+    var cadastrosDatabase = await openDatabase(
+      path,
+      version: 3,
+      onDowngrade: onDatabaseDowngradeDelete,
+      onCreate: _createDb,
+      onUpgrade: _onUpgrade,
+    );
     return cadastrosDatabase;
   }
 
-  void _createDb(Database db, int newVersion) async {
+  Future<void> _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $cadastroTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
         '$colNome TEXT, $colEndereco TEXT, $colTelefone TEXT, $colVeste TEXT, $colEmail TEXT, $colImagem TEXT)');
-    db.execute(
+
+    await db.execute(
         'CREATE TABLE $eventoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-        '$colNome TEXT, $colResponsavel TEXT, $colDescricao TEXT, $colData TEXT, $colImagem TEXT)');
-    db.execute(
+        '$colNome TEXT, $colResponsavel TEXT, $colDescricao TEXT, $colData TEXT, $colImagem TEXT, $colAtivo BOOLEAN NULL)');
+
+    await db.execute(
         'CREATE TABLE $produtoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
         '$colNome TEXT, $colDescricao TEXT, $colQuantidade TEXT, $colImagem TEXT)');
-    db.execute(
+
+    await db.execute(
         'CREATE TABLE $chamadas($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
         '$colIdCadastro INT, $colIdEvento INT)');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < newVersion) {
+      await db.execute(
+          'ALTER TABLE $eventoTable ADD COLUMN $colAtivo BOOLEAN NULL');
+    }
   }
 
 //Incluir um objeto cadastro no banco de dados
