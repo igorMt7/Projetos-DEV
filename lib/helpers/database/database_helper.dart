@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:partilhe/helpers/database/tabelas/cadastro.dart';
+import 'package:partilhe/helpers/database/tabelas/campos_tabelas.dart';
+import 'package:partilhe/helpers/database/tabelas/chamadas.dart';
+import 'package:partilhe/helpers/database/tabelas/evento.dart';
+import 'package:partilhe/helpers/database/tabelas/produto.dart';
 import 'package:partilhe/models/cadastro.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:partilhe/models/produto.dart';
@@ -10,26 +15,6 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper;
   static Database _database;
-
-//usada para definir as colunas da tabela
-  String cadastroTable = 'cadastro';
-  String produtoTable = 'produto';
-  String colId = 'id';
-  String colNome = 'nome';
-  String colEndereco = 'endereco';
-  String colTelefone = 'telefone';
-  String colVeste = 'veste';
-  String colEmail = 'email';
-  String colImagem = 'imagem';
-  String eventoTable = 'evento';
-  String colResponsavel = 'responsavel';
-  String colDescricao = 'descricao';
-  String colQuantidade = 'quantidade';
-  String colData = 'data';
-  String chamadas = 'chamadas';
-  String colIdCadastro = 'idCadastro';
-  String colIdEvento = 'idEvento';
-  String colAtivo = 'ativo';
 
   //construtor nomeado para criar instância da classe
   DatabaseHelper._createInstance();
@@ -64,21 +49,10 @@ class DatabaseHelper {
   }
 
   Future<void> _createDb(Database db, int newVersion) async {
-    await db.execute(
-        'CREATE TABLE $cadastroTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-        '$colNome TEXT, $colEndereco TEXT, $colTelefone TEXT, $colVeste TEXT, $colEmail TEXT, $colImagem TEXT)');
-
-    await db.execute(
-        'CREATE TABLE $eventoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-        '$colNome TEXT, $colResponsavel TEXT, $colDescricao TEXT, $colData TEXT, $colImagem TEXT, $colAtivo BOOLEAN NULL)');
-
-    await db.execute(
-        'CREATE TABLE $produtoTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-        '$colNome TEXT, $colDescricao TEXT, $colQuantidade TEXT, $colImagem TEXT)');
-
-    await db.execute(
-        'CREATE TABLE $chamadas($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-        '$colIdCadastro INT, $colIdEvento INT)');
+    await db.execute(TabelaCadastro.cadastro);
+    await db.execute(TabelaEvento.evento);
+    await db.execute(TabelaProduto.produto);
+    await db.execute(TabelaChamadas.chamadas);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -93,7 +67,6 @@ class DatabaseHelper {
     Database db = await this.database;
 
     var resultado = await db.insert(cadastroTable, cadastro.toMap());
-
     return resultado;
   }
 

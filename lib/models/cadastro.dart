@@ -7,8 +7,14 @@ class Cadastro {
   String email;
   String imagem;
 
-  Cadastro(this.nome, this.endereco, this.telefone, this.veste, this.email,
-      this.imagem);
+  Cadastro(
+    this.nome,
+    this.endereco,
+    this.telefone,
+    this.veste,
+    this.email,
+    this.imagem,
+  );
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{

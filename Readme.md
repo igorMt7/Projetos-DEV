@@ -17,3 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 
 ## Packages info
+flutter packages pub run build_runner watch --delete-conflicting-outputs

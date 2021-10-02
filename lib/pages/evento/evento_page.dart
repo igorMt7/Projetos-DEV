@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/value_objects/bool_value_object.dart';
 import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:partilhe/pages/chamada_lista.dart';
+import 'package:partilhe/pages/evento/chamada/chamada_lista.dart';
+import 'package:partilhe/routes/rotas.dart';
 
 class EventoPage extends StatefulWidget {
   final Evento evento;
@@ -200,8 +202,7 @@ class _EventoPageState extends State<EventoPage> {
                   child: Material(
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => Chamada()));
+                        AppRouter.gotoPush(nomeRota: rotaChamada);
                       },
                       child: Container(
                         decoration: new BoxDecoration(

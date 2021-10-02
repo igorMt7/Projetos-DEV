@@ -1,30 +1,30 @@
 import 'dart:io';
 
 import 'package:partilhe/helpers/database/database_helper.dart';
-import 'package:partilhe/models/cadastro.dart';
-import 'package:partilhe/pages/cadastro_page.dart';
+import 'package:partilhe/models/produto.dart';
 import 'package:flutter/material.dart';
+import 'package:partilhe/pages/produto/produto_page.dart';
 
-class ListaAssistidos extends StatefulWidget {
+class ListaProdutos extends StatefulWidget {
   @override
-  _ListaAssistidos createState() => _ListaAssistidos();
+  _ListaProdutos createState() => _ListaProdutos();
 }
 
-class _ListaAssistidos extends State<ListaAssistidos> {
+class _ListaProdutos extends State<ListaProdutos> {
   DatabaseHelper db = DatabaseHelper();
-  List<Cadastro> cadastros = <Cadastro>[];
+  List<Produto> produtos = <Produto>[];
 
   @override
   void initState() {
     super.initState();
 
-    _exibeTodosCadastros();
+    _exibeTodosProdutos();
   }
 
-  void _exibeTodosCadastros() {
-    db.getCadastros().then((lista) {
+  void _exibeTodosProdutos() {
+    db.getProdutos().then((lista) {
       setState(() {
-        cadastros = lista;
+        produtos = lista;
       });
     });
   }
@@ -33,7 +33,7 @@ class _ListaAssistidos extends State<ListaAssistidos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastros"),
+        title: Text("Produtos"),
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         actions: <Widget>[],
@@ -41,7 +41,7 @@ class _ListaAssistidos extends State<ListaAssistidos> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibeCadastroPage();
+          _exibeProdutoPage();
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
@@ -49,15 +49,15 @@ class _ListaAssistidos extends State<ListaAssistidos> {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10.0),
-        itemCount: cadastros.length,
+        itemCount: produtos.length,
         itemBuilder: (context, index) {
-          return _listaCadastros(context, index);
+          return _listaProdutos(context, index);
         },
       ),
     );
   }
 
-  _listaCadastros(BuildContext context, int index) {
+  _listaProdutos(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -71,9 +71,9 @@ class _ListaAssistidos extends State<ListaAssistidos> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: cadastros[index].imagem != null
-                            ? FileImage(File(cadastros[index].imagem))
-                            : AssetImage("images/cadastro.png")),
+                        image: produtos[index].imagem != null
+                            ? FileImage(File(produtos[index].imagem))
+                            : AssetImage("images/produto.png")),
                   ),
                 ),
                 Padding(
@@ -81,55 +81,55 @@ class _ListaAssistidos extends State<ListaAssistidos> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(cadastros[index].nome ?? "",
+                        Text(produtos[index].nome ?? "",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             )),
-                        Text(cadastros[index].telefone ?? "",
+                        Text(produtos[index].quantidade ?? "",
                             style: TextStyle(fontSize: 17)),
-                        Text(cadastros[index].endereco ?? "",
+                        Text(produtos[index].descricao ?? "",
                             style: TextStyle(fontSize: 11)),
                       ],
                     )),
                 IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () {
-                    _confirmaExclusao(context, cadastros[index].id, index);
+                    _confirmaExclusao(context, produtos[index].id, index);
                   },
                 )
               ],
             )),
       ),
       onTap: () {
-        _exibeCadastroPage(cadastro: cadastros[index]);
+        _exibeProdutoPage(produto: produtos[index]);
       },
     );
   }
 
-  void _exibeCadastroPage({Cadastro cadastro}) async {
-    final cadastroRecebido = await Navigator.push(
+  void _exibeProdutoPage({Produto produto}) async {
+    final produtoRecebido = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CadastroPage(cadastro: cadastro)),
+      MaterialPageRoute(builder: (context) => ProdutoPage(produto: produto)),
     );
 
-    if (cadastroRecebido != null) {
-      if (cadastro != null) {
-        await db.updateCadastro(cadastroRecebido);
+    if (produtoRecebido != null) {
+      if (produto != null) {
+        await db.updateProduto(produtoRecebido);
       } else {
-        await db.insertCadastro(cadastroRecebido);
+        await db.insertProduto(produtoRecebido);
       }
-      _exibeTodosCadastros();
+      _exibeTodosProdutos();
     }
   }
 
-  void _confirmaExclusao(BuildContext context, int cadastroid, index) {
+  void _confirmaExclusao(BuildContext context, int produtoid, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Excluir Cadastro"),
-          content: Text("Confirma a exclusão do Cadastro?"),
+          title: Text("Excluir Produto"),
+          content: Text("Confirma a exclusão do Produto?"),
           actions: <Widget>[
             FloatingActionButton.extended(
               backgroundColor: Theme.of(context).accentColor,
@@ -140,8 +140,8 @@ class _ListaAssistidos extends State<ListaAssistidos> {
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
                 setState(() {
-                  cadastros.removeAt(index);
-                  db.deleteCadastro(cadastroid);
+                  produtos.removeAt(index);
+                  db.deleteProduto(produtoid);
                 });
                 Navigator.of(context).pop();
               },

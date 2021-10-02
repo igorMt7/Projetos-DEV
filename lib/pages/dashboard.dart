@@ -1,8 +1,6 @@
-import 'package:partilhe/pages/cadastro_lista.dart';
-
+import 'package:partilhe/app.router.dart';
 import 'package:flutter/material.dart';
-import 'package:partilhe/pages/evento_lista.dart';
-import 'package:partilhe/pages/produto_lista.dart';
+import 'package:partilhe/routes/rotas.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -34,11 +32,7 @@ class Dashboard extends StatelessWidget {
                 child: Material(
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ListaAssistidos(),
-                        ),
-                      );
+                      AppRouter.gotoPush(nomeRota: rotaListaCadastros);
                     },
                     child: Container(
                       decoration: new BoxDecoration(
@@ -72,8 +66,7 @@ class Dashboard extends StatelessWidget {
                 child: Material(
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ListaEventos()));
+                      AppRouter.gotoPush(nomeRota: rotaListaEventos);
                     },
                     child: Container(
                       decoration: new BoxDecoration(
@@ -116,8 +109,7 @@ class Dashboard extends StatelessWidget {
                 child: Material(
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ListaProdutos()));
+                      AppRouter.gotoPush(nomeRota: rotaListaProdutos);
                     },
                     child: Container(
                       decoration: new BoxDecoration(
@@ -154,8 +146,7 @@ class Dashboard extends StatelessWidget {
                 child: Material(
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ListaAssistidos()));
+                      AppRouter.gotoPush(nomeRota: rotaListaCadastros);
                     },
                     child: Container(
                       decoration: new BoxDecoration(

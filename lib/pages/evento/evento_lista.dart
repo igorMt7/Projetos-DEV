@@ -1,30 +1,32 @@
 import 'dart:io';
 
 import 'package:partilhe/helpers/database/database_helper.dart';
-import 'package:partilhe/models/produto.dart';
-import 'package:flutter/material.dart';
-import 'package:partilhe/pages/produto_page.dart';
 
-class ListaProdutos extends StatefulWidget {
+import 'package:partilhe/models/evento.dart';
+
+import 'package:partilhe/pages/evento/evento_page.dart';
+import 'package:flutter/material.dart';
+
+class ListaEventos extends StatefulWidget {
   @override
-  _ListaProdutos createState() => _ListaProdutos();
+  _ListaEventos createState() => _ListaEventos();
 }
 
-class _ListaProdutos extends State<ListaProdutos> {
+class _ListaEventos extends State<ListaEventos> {
   DatabaseHelper db = DatabaseHelper();
-  List<Produto> produtos = <Produto>[];
+  List<Evento> eventos = <Evento>[];
 
   @override
   void initState() {
     super.initState();
 
-    _exibeTodosProdutos();
+    _exibeTodosEventos();
   }
 
-  void _exibeTodosProdutos() {
-    db.getProdutos().then((lista) {
+  void _exibeTodosEventos() {
+    db.getEventos().then((lista) {
       setState(() {
-        produtos = lista;
+        eventos = lista;
       });
     });
   }
@@ -33,7 +35,7 @@ class _ListaProdutos extends State<ListaProdutos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Produtos"),
+        title: Text("Eventos"),
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         actions: <Widget>[],
@@ -41,7 +43,7 @@ class _ListaProdutos extends State<ListaProdutos> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibeProdutoPage();
+          _exibeEventoPage();
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
@@ -49,15 +51,15 @@ class _ListaProdutos extends State<ListaProdutos> {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10.0),
-        itemCount: produtos.length,
+        itemCount: eventos.length,
         itemBuilder: (context, index) {
-          return _listaProdutos(context, index);
+          return _listaEventos(context, index);
         },
       ),
     );
   }
 
-  _listaProdutos(BuildContext context, int index) {
+  _listaEventos(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -71,9 +73,9 @@ class _ListaProdutos extends State<ListaProdutos> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: produtos[index].imagem != null
-                            ? FileImage(File(produtos[index].imagem))
-                            : AssetImage("images/produto.png")),
+                        image: eventos[index].imagem != null
+                            ? FileImage(File(eventos[index].imagem))
+                            : AssetImage("images/evento.png")),
                   ),
                 ),
                 Padding(
@@ -81,55 +83,55 @@ class _ListaProdutos extends State<ListaProdutos> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(produtos[index].nome ?? "",
-                            style: TextStyle(
+                        Text(eventos[index].nome ?? "",
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             )),
-                        Text(produtos[index].quantidade ?? "",
-                            style: TextStyle(fontSize: 17)),
-                        Text(produtos[index].descricao ?? "",
-                            style: TextStyle(fontSize: 11)),
+                        Text(eventos[index].data?.toShortStringDateTime ?? "",
+                            style: const TextStyle(fontSize: 17)),
+                        Text(eventos[index].responsavel ?? "",
+                            style: const TextStyle(fontSize: 11)),
                       ],
                     )),
                 IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () {
-                    _confirmaExclusao(context, produtos[index].id, index);
+                    _confirmaExclusao(context, eventos[index].id, index);
                   },
                 )
               ],
             )),
       ),
       onTap: () {
-        _exibeProdutoPage(produto: produtos[index]);
+        _exibeEventoPage(evento: eventos[index]);
       },
     );
   }
 
-  void _exibeProdutoPage({Produto produto}) async {
-    final produtoRecebido = await Navigator.push(
+  void _exibeEventoPage({Evento evento}) async {
+    final eventoRecebido = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProdutoPage(produto: produto)),
+      MaterialPageRoute(builder: (context) => EventoPage(evento: evento)),
     );
 
-    if (produtoRecebido != null) {
-      if (produto != null) {
-        await db.updateProduto(produtoRecebido);
+    if (eventoRecebido != null) {
+      if (evento != null) {
+        await db.updateEvento(eventoRecebido);
       } else {
-        await db.insertProduto(produtoRecebido);
+        await db.insertEvento(eventoRecebido);
       }
-      _exibeTodosProdutos();
+      _exibeTodosEventos();
     }
   }
 
-  void _confirmaExclusao(BuildContext context, int produtoid, index) {
+  void _confirmaExclusao(BuildContext context, int eventoid, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Excluir Produto"),
-          content: Text("Confirma a exclusão do Produto?"),
+          title: Text("Excluir Evento"),
+          content: Text("Confirma a exclusão do Evento?"),
           actions: <Widget>[
             FloatingActionButton.extended(
               backgroundColor: Theme.of(context).accentColor,
@@ -140,8 +142,8 @@ class _ListaProdutos extends State<ListaProdutos> {
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
                 setState(() {
-                  produtos.removeAt(index);
-                  db.deleteProduto(produtoid);
+                  eventos.removeAt(index);
+                  db.deleteEvento(eventoid);
                 });
                 Navigator.of(context).pop();
               },

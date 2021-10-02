@@ -1,41 +1,20 @@
 import 'dart:io';
 
-import 'package:partilhe/helpers/database/database_helper.dart';
-
-import 'package:partilhe/models/evento.dart';
-
-import 'package:partilhe/pages/evento_page.dart';
+import 'package:partilhe/app.router.dart';
 import 'package:flutter/material.dart';
+import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
+import 'package:partilhe/pages/cadastro/store/cadastros_store.dart';
+import 'package:partilhe/routes/rotas.dart';
 
-class ListaEventos extends StatefulWidget {
-  @override
-  _ListaEventos createState() => _ListaEventos();
-}
-
-class _ListaEventos extends State<ListaEventos> {
-  DatabaseHelper db = DatabaseHelper();
-  List<Evento> eventos = <Evento>[];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _exibeTodosEventos();
-  }
-
-  void _exibeTodosEventos() {
-    db.getEventos().then((lista) {
-      setState(() {
-        eventos = lista;
-      });
-    });
-  }
+class ListaAssistidos extends StatelessWidget {
+  const ListaAssistidos({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final _store = CadastrosStore();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Eventos"),
+        title: Text("Cadastros"),
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         actions: <Widget>[],
@@ -43,23 +22,38 @@ class _ListaEventos extends State<ListaEventos> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibeEventoPage();
+          AppRouter.gotoParams(
+            nomeRota: rotaCadastro,
+            parametros: CadastroStore().novo(),
+          );
+          // _exibeCadastroPage(context);
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).accentColor,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemCount: eventos.length,
-        itemBuilder: (context, index) {
-          return _listaEventos(context, index);
+      body: FutureBuilder(
+        future: _store.iniciar(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemCount: _store.cadastros.length,
+              itemBuilder: (context, index) {
+                return _listaCadastros(context, index, _store);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text('erro');
+          } else {
+            return Container();
+          }
         },
       ),
     );
   }
 
-  _listaEventos(BuildContext context, int index) {
+  _listaCadastros(BuildContext context, int index, CadastrosStore store) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -73,9 +67,9 @@ class _ListaEventos extends State<ListaEventos> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: eventos[index].imagem != null
-                            ? FileImage(File(eventos[index].imagem))
-                            : AssetImage("images/evento.png")),
+                        image: store.cadastros[index].imagem != null
+                            ? FileImage(File(store.cadastros[index].imagem))
+                            : AssetImage("images/cadastro.png")),
                   ),
                 ),
                 Padding(
@@ -83,55 +77,61 @@ class _ListaEventos extends State<ListaEventos> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(eventos[index].nome ?? "",
-                            style: const TextStyle(
+                        Text(store.cadastros[index].nome ?? "",
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             )),
-                        Text(eventos[index].data?.toShortStringDateTime ?? "",
-                            style: const TextStyle(fontSize: 17)),
-                        Text(eventos[index].responsavel ?? "",
-                            style: const TextStyle(fontSize: 11)),
+                        Text(store.cadastros[index].telefone ?? "",
+                            style: TextStyle(fontSize: 17)),
+                        Text(store.cadastros[index].endereco ?? "",
+                            style: TextStyle(fontSize: 11)),
                       ],
                     )),
                 IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () {
-                    _confirmaExclusao(context, eventos[index].id, index);
+                    _confirmaExclusao(
+                        context, store.cadastros[index].id, index);
                   },
                 )
               ],
             )),
       ),
       onTap: () {
-        _exibeEventoPage(evento: eventos[index]);
+        AppRouter.gotoParams(
+          nomeRota: rotaCadastro,
+          parametros: [store.cadastros[index]],
+        );
+        // _exibeCadastroPage(context, cadastro: store.cadastros[index]);
       },
     );
   }
 
-  void _exibeEventoPage({Evento evento}) async {
-    final eventoRecebido = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EventoPage(evento: evento)),
-    );
+  // void _exibeCadastroPage(BuildContext context,
+  //     {CadastroStore cadastro}) async {
+  //   final cadastroRecebido = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => CadastroPage(cadastro: cadastro)),
+  //   );
 
-    if (eventoRecebido != null) {
-      if (evento != null) {
-        await db.updateEvento(eventoRecebido);
-      } else {
-        await db.insertEvento(eventoRecebido);
-      }
-      _exibeTodosEventos();
-    }
-  }
+  //   if (cadastroRecebido != null) {
+  //     if (cadastro != null) {
+  //       // await db.updateCadastro(cadastroRecebido);
+  //     } else {
+  //       // await db.insertCadastro(cadastroRecebido);
+  //     }
+  //     // _exibeTodosCadastros();
+  //   }
+  // }
 
-  void _confirmaExclusao(BuildContext context, int eventoid, index) {
+  void _confirmaExclusao(BuildContext context, int cadastroid, index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Excluir Evento"),
-          content: Text("Confirma a exclusão do Evento?"),
+          title: Text("Excluir Cadastro"),
+          content: Text("Confirma a exclusão do Cadastro?"),
           actions: <Widget>[
             FloatingActionButton.extended(
               backgroundColor: Theme.of(context).accentColor,
@@ -141,10 +141,10 @@ class _ListaEventos extends State<ListaEventos> {
                   borderRadius: BorderRadius.circular(10)),
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                setState(() {
-                  eventos.removeAt(index);
-                  db.deleteEvento(eventoid);
-                });
+                // setState(() {
+                //   store.cadastros.removeAt(index);
+                //   db.deleteCadastro(cadastroid);
+                // });
                 Navigator.of(context).pop();
               },
             ),
@@ -165,7 +165,6 @@ class _ListaEventos extends State<ListaEventos> {
     );
   }
 }
-
 /* ,
                             style: TextStyle(
                               fontSize: 20,

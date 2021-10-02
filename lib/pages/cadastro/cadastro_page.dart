@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:partilhe/helpers/verifica_nulo_vazio.dart';
 import 'package:partilhe/models/cadastro.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
 
 class CadastroPage extends StatefulWidget {
-  final Cadastro cadastro;
+  final CadastroStore cadastro;
+
   CadastroPage({this.cadastro});
 
   @override
@@ -13,35 +16,34 @@ class CadastroPage extends StatefulWidget {
 }
 
 class _CadastroPageState extends State<CadastroPage> {
-  final _nomeController = TextEditingController();
-  final _enderecoController = TextEditingController();
-  final _telefoneController = TextEditingController();
-  final _vesteController = TextEditingController();
-  final _emailController = TextEditingController();
+  // final _nomeController = TextEditingController();
+  // final _enderecoController = TextEditingController();
+  // final _telefoneController = TextEditingController();
+  // final _vesteController = TextEditingController();
+  // final _emailController = TextEditingController();
   final _nomeFocus = FocusNode();
   final _enderecoFocus = FocusNode();
   final _telefoneFocus = FocusNode();
   final _vesteFocus = FocusNode();
   final _emailFocus = FocusNode();
 
-  bool editado = false;
-  Cadastro _editaCadastro;
+  // Cadastro _editaCadastro;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.cadastro == null) {
-      _editaCadastro = Cadastro('', '', '', '', '', null);
-    } else {
-      _editaCadastro = Cadastro.fromMap(widget.cadastro.toMap());
+    // if (widget.cadastro == null) {
+    //   _editaCadastro = Cadastro('', '', '', '', '', null);
+    // } else {
+    //   _editaCadastro = Cadastro.fromMap(widget.cadastro.toModel().toMap());
 
-      _nomeController.text = _editaCadastro.nome;
-      _enderecoController.text = _editaCadastro.endereco;
-      _telefoneController.text = _editaCadastro.telefone;
-      _vesteController.text = _editaCadastro.veste;
-      _emailController.text = _editaCadastro.email;
-    }
+    //   // _nomeController.text = _editaCadastro.nome;
+    //   // _enderecoController.text = _editaCadastro.endereco;
+    //   // _telefoneController.text = _editaCadastro.telefone;
+    //   // _vesteController.text = _editaCadastro.veste;
+    //   // _emailController.text = _editaCadastro.email;
+    // }
   }
 
   @override
@@ -49,17 +51,17 @@ class _CadastroPageState extends State<CadastroPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
-          title: Text(_editaCadastro.nome == ''
+          title: Text(widget.cadastro.nome == ''
               ? "Novo Cadastro"
-              : _editaCadastro.nome),
+              : widget.cadastro.nome),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (_editaCadastro.nome != null &&
-                _editaCadastro.nome.isNotEmpty &&
-                _editaCadastro.nome.length < 25) {
-              Navigator.pop(context, _editaCadastro);
+          onPressed: () async {
+            if (!VerificaNuloVazio.ehNuloOuVazio(widget.cadastro.nome) &&
+                widget.cadastro.nome.length < 25) {
+              await widget.cadastro.salvar();
+              Navigator.pop(context);
             } else {
               _exibeAviso();
               FocusScope.of(context).requestFocus(_nomeFocus);
@@ -67,7 +69,7 @@ class _CadastroPageState extends State<CadastroPage> {
           },
           child: Icon(Icons.save),
           backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).accentColor,
+          foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
         body: SingleChildScrollView(
             padding: EdgeInsets.all(10.0),
@@ -80,8 +82,8 @@ class _CadastroPageState extends State<CadastroPage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: _editaCadastro.imagem != null
-                              ? FileImage(File(_editaCadastro.imagem))
+                          image: widget.cadastro.imagem != null
+                              ? FileImage(File(widget.cadastro.imagem))
                               : AssetImage("images/cadastro.png")),
                     ),
                   ),
@@ -90,68 +92,41 @@ class _CadastroPageState extends State<CadastroPage> {
                         .pickImage(source: ImageSource.gallery)
                         .then((file) {
                       if (file == null) return;
-                      setState(() {
-                        _editaCadastro.imagem = file.path;
-                      });
+                      widget.cadastro.imagem = file.path;
                     });
                   },
                 ),
-                TextField(
-                  controller: _nomeController,
+                TextFormField(
+                  initialValue: widget.cadastro.nome,
                   focusNode: _nomeFocus,
                   decoration: InputDecoration(labelText: "Nome"),
-                  onChanged: (text) {
-                    editado = true;
-                    setState(() {
-                      _editaCadastro.nome = text;
-                    });
-                  },
+                  onChanged: (value) => widget.cadastro.nome = value,
                 ),
-                TextField(
-                  controller: _enderecoController,
+                TextFormField(
+                  initialValue: widget.cadastro.endereco,
                   focusNode: _enderecoFocus,
                   decoration: InputDecoration(labelText: "Endereço"),
-                  onChanged: (text) {
-                    editado = true;
-                    setState(() {
-                      _editaCadastro.endereco = text;
-                    });
-                  },
+                  onChanged: (value) => widget.cadastro.endereco = value,
                 ),
-                TextField(
-                  controller: _telefoneController,
+                TextFormField(
+                  initialValue: widget.cadastro.telefone,
                   focusNode: _telefoneFocus,
                   decoration: InputDecoration(labelText: "Telefone/WhatsApp"),
-                  onChanged: (text) {
-                    editado = true;
-                    setState(
-                      () {
-                        _editaCadastro.telefone = text;
-                      },
-                    );
-                  },
+                  onChanged: (value) => widget.cadastro.telefone = value,
                   keyboardType: TextInputType.number,
                 ),
-                TextField(
-                  controller: _vesteController,
+                TextFormField(
+                  initialValue: widget.cadastro.veste,
                   focusNode: _vesteFocus,
                   decoration:
                       InputDecoration(labelText: "Número ou tamanho da roupa:"),
-                  onChanged: (text) {
-                    editado = true;
-                    setState(() {
-                      _editaCadastro.veste = text;
-                    });
-                  },
+                  onChanged: (value) => widget.cadastro.veste = value,
                 ),
-                TextField(
-                  controller: _emailController,
+                TextFormField(
+                  initialValue: widget.cadastro.email,
                   focusNode: _emailFocus,
                   decoration: InputDecoration(labelText: "Email"),
-                  onChanged: (text) {
-                    editado = true;
-                    _editaCadastro.email = text;
-                  },
+                  onChanged: (value) => widget.cadastro.email = value,
                   keyboardType: TextInputType.emailAddress,
                 ),
               ],
