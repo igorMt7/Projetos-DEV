@@ -4,6 +4,7 @@ import 'package:partilhe/models/cadastro.dart';
 part 'cadastro_store.g.dart';
 
 CadastroStore cadastroStoreFromModel(Cadastro model) => CadastroStore(
+      id: model.id,
       nome: model.nome,
       endereco: model.endereco,
       telefone: model.telefone,
