@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:partilhe/pages/cadastro/cadastro_lista.dart';
 import 'package:partilhe/pages/cadastro/cadastro_page.dart';
-import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
 import 'package:partilhe/pages/dashboard.dart';
 import 'package:partilhe/pages/evento/chamada/chamada_lista.dart';
 import 'package:partilhe/pages/evento/evento_lista.dart';

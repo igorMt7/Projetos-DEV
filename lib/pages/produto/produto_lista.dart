@@ -1,36 +1,18 @@
 import 'dart:io';
 
-import 'package:partilhe/helpers/database/database_helper.dart';
-import 'package:partilhe/models/produto.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
+import 'package:partilhe/app.router.dart';
 import 'package:flutter/material.dart';
-import 'package:partilhe/pages/produto/produto_page.dart';
+import 'package:partilhe/pages/produto/stores/produtos_store.dart';
+import 'package:partilhe/routes/rotas.dart';
 
-class ListaProdutos extends StatefulWidget {
-  @override
-  _ListaProdutos createState() => _ListaProdutos();
-}
-
-class _ListaProdutos extends State<ListaProdutos> {
-  DatabaseHelper db = DatabaseHelper();
-  List<Produto> produtos = <Produto>[];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _exibeTodosProdutos();
-  }
-
-  void _exibeTodosProdutos() {
-    db.getProdutos().then((lista) {
-      setState(() {
-        produtos = lista;
-      });
-    });
-  }
+class ListaProdutos extends StatelessWidget {
+  const ListaProdutos({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final _store = GetIt.I<ProdutosStore>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Produtos"),
@@ -41,23 +23,25 @@ class _ListaProdutos extends State<ListaProdutos> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibeProdutoPage();
+          _store.novo();
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).accentColor,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemCount: produtos.length,
-        itemBuilder: (context, index) {
-          return _listaProdutos(context, index);
-        },
-      ),
+      body: Observer(builder: (context) {
+        return ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: _store.produtos.length,
+          itemBuilder: (context, index) {
+            return _listaProdutos(context, index, _store);
+          },
+        );
+      }),
     );
   }
 
-  _listaProdutos(BuildContext context, int index) {
+  _listaProdutos(BuildContext context, int index, ProdutosStore store) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -71,59 +55,53 @@ class _ListaProdutos extends State<ListaProdutos> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: produtos[index].imagem != null
-                            ? FileImage(File(produtos[index].imagem))
+                        image: store.produtos[index].imagem != null
+                            ? FileImage(File(store.produtos[index].imagem))
                             : AssetImage("images/produto.png")),
                   ),
                 ),
-                Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(produtos[index].nome ?? "",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        Text(produtos[index].quantidade ?? "",
-                            style: TextStyle(fontSize: 17)),
-                        Text(produtos[index].descricao ?? "",
-                            style: TextStyle(fontSize: 11)),
-                      ],
-                    )),
-                IconButton(
-                  icon: Icon(Icons.delete_forever),
-                  onPressed: () {
-                    _confirmaExclusao(context, produtos[index].id, index);
-                  },
+                Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(store.produtos[index].nome ?? "",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              )),
+                          Text(store.produtos[index].quantidade ?? "",
+                              style: TextStyle(fontSize: 17)),
+                          Text(store.produtos[index].descricao ?? "",
+                              style: TextStyle(fontSize: 11)),
+                        ],
+                      )),
+                ),
+                Container(
+                  width: 60.0,
+                  height: 80.0,
+                  child: IconButton(
+                    icon: Icon(Icons.delete_forever),
+                    onPressed: () {
+                      _confirmaExclusao(
+                          context, store.produtos[index].id, store);
+                    },
+                  ),
                 )
               ],
             )),
       ),
       onTap: () {
-        _exibeProdutoPage(produto: produtos[index]);
+        AppRouter.gotoParams(
+          nomeRota: rotaProduto,
+          parametros: [store.produtos[index]],
+        );
       },
     );
   }
 
-  void _exibeProdutoPage({Produto produto}) async {
-    final produtoRecebido = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProdutoPage(produto: produto)),
-    );
-
-    if (produtoRecebido != null) {
-      if (produto != null) {
-        await db.updateProduto(produtoRecebido);
-      } else {
-        await db.insertProduto(produtoRecebido);
-      }
-      _exibeTodosProdutos();
-    }
-  }
-
-  void _confirmaExclusao(BuildContext context, int produtoid, index) {
+  void _confirmaExclusao(BuildContext context, int id, ProdutosStore store) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -138,11 +116,8 @@ class _ListaProdutos extends State<ListaProdutos> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
-              onPressed: () {
-                setState(() {
-                  produtos.removeAt(index);
-                  db.deleteProduto(produtoid);
-                });
+              onPressed: () async {
+                await store.deletar(id);
                 Navigator.of(context).pop();
               },
             ),
@@ -157,15 +132,9 @@ class _ListaProdutos extends State<ListaProdutos> {
                 Navigator.of(context).pop();
               },
             ),
-          ], //widget
+          ],
         );
       },
     );
   }
 }
-
-/* ,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
- */

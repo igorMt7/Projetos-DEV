@@ -1,6 +1,6 @@
 esconder botão de REALIZAR CHAMADA quando EVENTO ainda não estiver salvo, exibir apenas no EDITAR EVENTO. (visibility)
 
-Right overflowed by xx pixels
+Right overflowed by xx pixels (OK)
 
 DATEPICKER nos campos DATA. (EVENTO OK)
 

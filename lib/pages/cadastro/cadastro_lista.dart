@@ -4,7 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:flutter/material.dart';
-import 'package:partilhe/pages/cadastro/store/cadastros_store.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
 import 'package:partilhe/routes/rotas.dart';
 
 class ListaAssistidos extends StatelessWidget {
@@ -13,7 +13,6 @@ class ListaAssistidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _store = GetIt.I<CadastrosStore>();
-    MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastros"),

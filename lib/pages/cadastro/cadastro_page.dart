@@ -1,66 +1,33 @@
 import 'dart:io';
 
-import 'package:partilhe/helpers/verifica_nulo_vazio.dart';
-import 'package:partilhe/models/cadastro.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastro_store.dart';
 
-class CadastroPage extends StatefulWidget {
+class CadastroPage extends StatelessWidget {
   final CadastroStore cadastro;
 
   CadastroPage({this.cadastro});
 
-  @override
-  _CadastroPageState createState() => _CadastroPageState();
-}
-
-class _CadastroPageState extends State<CadastroPage> {
-  // final _nomeController = TextEditingController();
-  // final _enderecoController = TextEditingController();
-  // final _telefoneController = TextEditingController();
-  // final _vesteController = TextEditingController();
-  // final _emailController = TextEditingController();
   final _nomeFocus = FocusNode();
   final _enderecoFocus = FocusNode();
   final _telefoneFocus = FocusNode();
   final _vesteFocus = FocusNode();
   final _emailFocus = FocusNode();
 
-  // Cadastro _editaCadastro;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // if (widget.cadastro == null) {
-    //   _editaCadastro = Cadastro('', '', '', '', '', null);
-    // } else {
-    //   _editaCadastro = Cadastro.fromMap(widget.cadastro.toModel().toMap());
-
-    //   // _nomeController.text = _editaCadastro.nome;
-    //   // _enderecoController.text = _editaCadastro.endereco;
-    //   // _telefoneController.text = _editaCadastro.telefone;
-    //   // _vesteController.text = _editaCadastro.veste;
-    //   // _emailController.text = _editaCadastro.email;
-    // }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
-          title: Text(widget.cadastro.nome == ''
-              ? "Novo Cadastro"
-              : widget.cadastro.nome),
+          title: Text(cadastro.nome == '' ? "Novo Cadastro" : cadastro.nome),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            // if (!VerificaNuloVazio.ehNuloOuVazio(widget.cadastro.nome) &&
-            //     widget.cadastro.nome.length < 25) {
-            await widget.cadastro.salvar();
+            // if (!VerificaNuloVazio.ehNuloOuVazio(cadastro.nome) &&
+            //     cadastro.nome.length < 25) {
+            await cadastro.salvar();
             Navigator.pop(context);
             // } else {
             //   _exibeAviso();
@@ -82,8 +49,8 @@ class _CadastroPageState extends State<CadastroPage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: widget.cadastro.imagem != null
-                              ? FileImage(File(widget.cadastro.imagem))
+                          image: cadastro.imagem != null
+                              ? FileImage(File(cadastro.imagem))
                               : AssetImage("images/cadastro.png")),
                     ),
                   ),
@@ -92,42 +59,42 @@ class _CadastroPageState extends State<CadastroPage> {
                         .pickImage(source: ImageSource.gallery)
                         .then((file) {
                       if (file == null) return;
-                      widget.cadastro.imagem = file.path;
+                      cadastro.imagem = file.path;
                     });
                   },
                 ),
                 TextFormField(
-                  initialValue: widget.cadastro.nome,
+                  initialValue: cadastro.nome,
                   focusNode: _nomeFocus,
                   maxLength: 24,
                   decoration: InputDecoration(labelText: "Nome"),
-                  onChanged: (value) => widget.cadastro.nome = value,
+                  onChanged: (value) => cadastro.nome = value,
                 ),
                 TextFormField(
-                  initialValue: widget.cadastro.endereco,
+                  initialValue: cadastro.endereco,
                   focusNode: _enderecoFocus,
                   decoration: InputDecoration(labelText: "Endereço"),
-                  onChanged: (value) => widget.cadastro.endereco = value,
+                  onChanged: (value) => cadastro.endereco = value,
                 ),
                 TextFormField(
-                  initialValue: widget.cadastro.telefone,
+                  initialValue: cadastro.telefone,
                   focusNode: _telefoneFocus,
                   decoration: InputDecoration(labelText: "Telefone/WhatsApp"),
-                  onChanged: (value) => widget.cadastro.telefone = value,
+                  onChanged: (value) => cadastro.telefone = value,
                   keyboardType: TextInputType.number,
                 ),
                 TextFormField(
-                  initialValue: widget.cadastro.veste,
+                  initialValue: cadastro.veste,
                   focusNode: _vesteFocus,
                   decoration:
                       InputDecoration(labelText: "Número ou tamanho da roupa:"),
-                  onChanged: (value) => widget.cadastro.veste = value,
+                  onChanged: (value) => cadastro.veste = value,
                 ),
                 TextFormField(
-                  initialValue: widget.cadastro.email,
+                  initialValue: cadastro.email,
                   focusNode: _emailFocus,
                   decoration: InputDecoration(labelText: "Email"),
-                  onChanged: (value) => widget.cadastro.email = value,
+                  onChanged: (value) => cadastro.email = value,
                   keyboardType: TextInputType.emailAddress,
                 ),
               ],

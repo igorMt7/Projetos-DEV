@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/cadastro.dart';
-import 'package:partilhe/pages/cadastro/store/cadastros_store.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
 part 'cadastro_store.g.dart';
 
 CadastroStore cadastroStoreFromModel(Cadastro model) => CadastroStore(
@@ -53,10 +53,15 @@ abstract class _CadastroStoreBase with Store {
 
   @action
   Future<void> salvar() async {
-    final id = await _db.insertCadastro(this.toModel());
-    this.id = id;
+    if (id != null && id > 0) {
+      await _db.updateCadastro(this.toModel());
+    } else {
+      final id = await _db.insertCadastro(this.toModel());
+      this.id = id;
+    }
     GetIt.I.get<CadastrosStore>().atualizarLista(this);
   }
 
-  toModel() => Cadastro(nome, endereco, telefone, veste, email, imagem);
+  Cadastro toModel() =>
+      Cadastro(nome, endereco, telefone, veste, email, imagem);
 }

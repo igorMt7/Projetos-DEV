@@ -2,7 +2,7 @@ import 'package:mobx/mobx.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/cadastro.dart';
-import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastro_store.dart';
 import 'package:partilhe/routes/rotas.dart';
 part 'cadastros_store.g.dart';
 
