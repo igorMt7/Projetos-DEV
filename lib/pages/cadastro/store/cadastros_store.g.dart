@@ -31,15 +31,33 @@ mixin _$CadastrosStore on _CadastrosStoreBase, Store {
     return _$iniciarAsyncAction.run(() => super.iniciar());
   }
 
+  final _$deletarAsyncAction = AsyncAction('_CadastrosStoreBase.deletar');
+
+  @override
+  Future<dynamic> deletar(int id) {
+    return _$deletarAsyncAction.run(() => super.deletar(id));
+  }
+
   final _$_CadastrosStoreBaseActionController =
       ActionController(name: '_CadastrosStoreBase');
 
   @override
-  dynamic salvar() {
+  dynamic atualizarLista(CadastroStore cadastro) {
     final _$actionInfo = _$_CadastrosStoreBaseActionController.startAction(
-        name: '_CadastrosStoreBase.salvar');
+        name: '_CadastrosStoreBase.atualizarLista');
     try {
-      return super.salvar();
+      return super.atualizarLista(cadastro);
+    } finally {
+      _$_CadastrosStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic novo() {
+    final _$actionInfo = _$_CadastrosStoreBaseActionController.startAction(
+        name: '_CadastrosStoreBase.novo');
+    try {
+      return super.novo();
     } finally {
       _$_CadastrosStoreBaseActionController.endAction(_$actionInfo);
     }

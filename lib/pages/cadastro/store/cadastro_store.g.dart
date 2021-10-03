@@ -117,7 +117,7 @@ mixin _$CadastroStore on _CadastroStoreBase, Store {
   final _$salvarAsyncAction = AsyncAction('_CadastroStoreBase.salvar');
 
   @override
-  Future<dynamic> salvar() {
+  Future<void> salvar() {
     return _$salvarAsyncAction.run(() => super.salvar());
   }
 

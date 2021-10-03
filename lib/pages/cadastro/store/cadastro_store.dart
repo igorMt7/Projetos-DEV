@@ -1,6 +1,8 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/cadastro.dart';
+import 'package:partilhe/pages/cadastro/store/cadastros_store.dart';
 part 'cadastro_store.g.dart';
 
 CadastroStore cadastroStoreFromModel(Cadastro model) => CadastroStore(
@@ -16,7 +18,7 @@ CadastroStore cadastroStoreFromModel(Cadastro model) => CadastroStore(
 class CadastroStore = _CadastroStoreBase with _$CadastroStore;
 
 abstract class _CadastroStoreBase with Store {
-  DatabaseHelper db = DatabaseHelper();
+  DatabaseHelper _db = DatabaseHelper();
 
   _CadastroStoreBase({
     this.id,
@@ -50,18 +52,11 @@ abstract class _CadastroStoreBase with Store {
   String imagem;
 
   @action
-  Future salvar() async {
-    final response = await db.insertCadastro(this.toModel());
+  Future<void> salvar() async {
+    final id = await _db.insertCadastro(this.toModel());
+    this.id = id;
+    GetIt.I.get<CadastrosStore>().atualizarLista(this);
   }
 
   toModel() => Cadastro(nome, endereco, telefone, veste, email, imagem);
-
-  novo() => CadastroStore(
-        nome: '',
-        email: '',
-        endereco: '',
-        imagem: null,
-        telefone: '',
-        veste: '',
-      );
 }

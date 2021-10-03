@@ -58,14 +58,14 @@ class _CadastroPageState extends State<CadastroPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            if (!VerificaNuloVazio.ehNuloOuVazio(widget.cadastro.nome) &&
-                widget.cadastro.nome.length < 25) {
-              await widget.cadastro.salvar();
-              Navigator.pop(context);
-            } else {
-              _exibeAviso();
-              FocusScope.of(context).requestFocus(_nomeFocus);
-            }
+            // if (!VerificaNuloVazio.ehNuloOuVazio(widget.cadastro.nome) &&
+            //     widget.cadastro.nome.length < 25) {
+            await widget.cadastro.salvar();
+            Navigator.pop(context);
+            // } else {
+            //   _exibeAviso();
+            //   FocusScope.of(context).requestFocus(_nomeFocus);
+            // }
           },
           child: Icon(Icons.save),
           backgroundColor: Theme.of(context).primaryColor,
@@ -99,6 +99,7 @@ class _CadastroPageState extends State<CadastroPage> {
                 TextFormField(
                   initialValue: widget.cadastro.nome,
                   focusNode: _nomeFocus,
+                  maxLength: 24,
                   decoration: InputDecoration(labelText: "Nome"),
                   onChanged: (value) => widget.cadastro.nome = value,
                 ),
@@ -133,31 +134,31 @@ class _CadastroPageState extends State<CadastroPage> {
             )));
   }
 
-  void _exibeAviso() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Problemas com o NOME:"),
-          content: new Text("Informe um nome válido menor que 25 letras"),
-          actions: <Widget>[
-            new FloatingActionButton.extended(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Theme.of(context).accentColor,
-              label: new Text(
-                "Fechar",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _exibeAviso() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: new Text("Problemas com o NOME:"),
+  //         content: new Text("Informe um nome válido menor que 25 letras"),
+  //         actions: <Widget>[
+  //           new FloatingActionButton.extended(
+  //             backgroundColor: Theme.of(context).primaryColor,
+  //             foregroundColor: Theme.of(context).accentColor,
+  //             label: new Text(
+  //               "Fechar",
+  //               style: TextStyle(
+  //                 fontSize: 15,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

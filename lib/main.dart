@@ -1,20 +1,20 @@
-//import 'package:contatos/pages/contato_page.dart';
-
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:partilhe/app.router.dart';
-import 'package:partilhe/pages/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:partilhe/dependency_injection.dart';
 import 'package:partilhe/routes/rotas.dart';
 
-/* void main(){
-  runApp(MaterialApp(
-    home: HomePage(),
-    debugShowCheckedModeBanner: false,
-   ) );
-}
- */
 void main() {
+  DependencyInjection(GetIt.instance);
+
   runApp(PartilheApp());
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 }
 
 class PartilheApp extends StatelessWidget {

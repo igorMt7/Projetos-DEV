@@ -1,8 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:flutter/material.dart';
-import 'package:partilhe/pages/cadastro/store/cadastro_store.dart';
 import 'package:partilhe/pages/cadastro/store/cadastros_store.dart';
 import 'package:partilhe/routes/rotas.dart';
 
@@ -11,7 +12,7 @@ class ListaAssistidos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _store = CadastrosStore();
+    final _store = GetIt.I<CadastrosStore>();
     MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -23,115 +24,89 @@ class ListaAssistidos extends StatelessWidget {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          AppRouter.gotoParams(
-            nomeRota: rotaCadastro,
-            parametros: CadastroStore().novo(),
-          );
-          // _exibeCadastroPage(context);
+          _store.novo();
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
-        // ignore: deprecated_member_use
         foregroundColor: Theme.of(context).accentColor,
       ),
-      body: FutureBuilder(
-        future: _store.iniciar(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              padding: EdgeInsets.all(10.0),
-              itemCount: _store.cadastros.length,
-              itemBuilder: (context, index) {
-                return _listaCadastros(context, index, _store);
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text('erro');
-          } else {
-            return Container();
-          }
-        },
-      ),
+      body: Observer(builder: (context) {
+        return ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: _store.cadastros.length,
+          itemBuilder: (context, index) {
+            return _listaCadastros(context, index, _store);
+          },
+        );
+      }),
     );
   }
 
   _listaCadastros(BuildContext context, int index, CadastrosStore store) {
     return GestureDetector(
       child: Card(
-        child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  width: 60.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: store.cadastros[index].imagem != null
-                            ? FileImage(File(store.cadastros[index].imagem))
-                            : AssetImage("images/cadastro.png")),
+        child: Container(
+          width: double.maxFinite - 10,
+          child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: 60.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: store.cadastros[index].imagem != null
+                              ? FileImage(File(store.cadastros[index].imagem))
+                              : AssetImage("images/cadastro.png")),
+                    ),
                   ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(store.cadastros[index].nome ?? "",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        Text(store.cadastros[index].telefone ?? "",
-                            style: TextStyle(fontSize: 17)),
-                        Wrap(
-                          children: [
-                            Text(store.cadastros[index].endereco ?? "",
-                                style: TextStyle(fontSize: 11))
-                          ],
-                        ),
-                      ],
-                    )),
-                IconButton(
-                  icon: Icon(Icons.delete_forever),
-                  onPressed: () {
-                    _confirmaExclusao(
-                        context, store.cadastros[index].id, index);
-                  },
-                )
-              ],
-            )),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(store.cadastros[index].nome ?? "",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              )),
+                          Text(store.cadastros[index].telefone ?? "",
+                              style: TextStyle(fontSize: 17)),
+                          Text(store.cadastros[index].endereco ?? "",
+                              style: TextStyle(fontSize: 11)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 60.0,
+                    height: 80.0,
+                    child: IconButton(
+                      icon: Icon(Icons.delete_forever),
+                      onPressed: () {
+                        _confirmaExclusao(
+                            context, store.cadastros[index].id, store);
+                      },
+                    ),
+                  )
+                ],
+              )),
+        ),
       ),
       onTap: () {
         AppRouter.gotoParams(
           nomeRota: rotaCadastro,
           parametros: [store.cadastros[index]],
         );
-        // _exibeCadastroPage(context, cadastro: store.cadastros[index]);
       },
     );
   }
 
-  // void _exibeCadastroPage(BuildContext context,
-  //     {CadastroStore cadastro}) async {
-  //   final cadastroRecebido = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => CadastroPage(cadastro: cadastro)),
-  //   );
-
-  //   if (cadastroRecebido != null) {
-  //     if (cadastro != null) {
-  //       // await db.updateCadastro(cadastroRecebido);
-  //     } else {
-  //       // await db.insertCadastro(cadastroRecebido);
-  //     }
-  //     // _exibeTodosCadastros();
-  //   }
-  // }
-
-  void _confirmaExclusao(BuildContext context, int cadastroid, index) {
+  void _confirmaExclusao(BuildContext context, int id, CadastrosStore store) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -146,11 +121,8 @@ class ListaAssistidos extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
-              onPressed: () {
-                // setState(() {
-                //   store.cadastros.removeAt(index);
-                //   db.deleteCadastro(cadastroid);
-                // });
+              onPressed: () async {
+                await store.deletar(id);
                 Navigator.of(context).pop();
               },
             ),
@@ -165,14 +137,9 @@ class ListaAssistidos extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-          ], //widget
+          ],
         );
       },
     );
   }
 }
-/* ,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
- */
