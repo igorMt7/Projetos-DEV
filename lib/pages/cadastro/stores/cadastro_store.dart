@@ -18,7 +18,7 @@ CadastroStore cadastroStoreFromModel(Cadastro model) => CadastroStore(
 class CadastroStore = _CadastroStoreBase with _$CadastroStore;
 
 abstract class _CadastroStoreBase with Store {
-  DatabaseHelper _db = DatabaseHelper();
+  final _db = GetIt.I<DatabaseHelper>();
 
   _CadastroStoreBase({
     this.id,

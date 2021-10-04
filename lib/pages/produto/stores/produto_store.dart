@@ -16,7 +16,7 @@ ProdutoStore produtoStoreFromModel(Produto model) => ProdutoStore(
 class ProdutoStore = _ProdutoStoreBase with _$ProdutoStore;
 
 abstract class _ProdutoStoreBase with Store {
-  DatabaseHelper _db = DatabaseHelper();
+  final _db = GetIt.I<DatabaseHelper>();
 
   _ProdutoStoreBase({
     this.id,

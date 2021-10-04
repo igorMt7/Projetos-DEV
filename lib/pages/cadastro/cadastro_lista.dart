@@ -99,7 +99,7 @@ class ListaAssistidos extends StatelessWidget {
       onTap: () {
         AppRouter.gotoParams(
           nomeRota: rotaCadastro,
-          parametros: [store.cadastros[index]],
+          parametros: store.cadastros[index],
         );
       },
     );

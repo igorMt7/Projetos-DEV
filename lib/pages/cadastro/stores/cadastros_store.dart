@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
@@ -9,7 +10,7 @@ part 'cadastros_store.g.dart';
 class CadastrosStore = _CadastrosStoreBase with _$CadastrosStore;
 
 abstract class _CadastrosStoreBase with Store {
-  DatabaseHelper _db = DatabaseHelper();
+  final _db = GetIt.I<DatabaseHelper>();
 
   _CadastrosStoreBase() {
     iniciar();

@@ -1,38 +1,19 @@
 import 'dart:io';
 
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
+import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
-
-import 'package:partilhe/models/evento.dart';
-
-import 'package:partilhe/pages/evento/evento_page.dart';
 import 'package:flutter/material.dart';
+import 'package:partilhe/pages/evento/stores/eventos_store.dart';
+import 'package:partilhe/routes/rotas.dart';
 
-class ListaEventos extends StatefulWidget {
-  @override
-  _ListaEventos createState() => _ListaEventos();
-}
-
-class _ListaEventos extends State<ListaEventos> {
-  DatabaseHelper db = DatabaseHelper();
-  List<Evento> eventos = <Evento>[];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _exibeTodosEventos();
-  }
-
-  void _exibeTodosEventos() {
-    db.getEventos().then((lista) {
-      setState(() {
-        eventos = lista;
-      });
-    });
-  }
+class ListaEventos extends StatelessWidget {
+  final db = GetIt.I<DatabaseHelper>();
 
   @override
   Widget build(BuildContext context) {
+    final _store = GetIt.I<EventosStore>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Eventos"),
@@ -43,23 +24,25 @@ class _ListaEventos extends State<ListaEventos> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _exibeEventoPage();
+          _store.novo();
         },
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).accentColor,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemCount: eventos.length,
-        itemBuilder: (context, index) {
-          return _listaEventos(context, index);
-        },
-      ),
+      body: Observer(builder: (context) {
+        return ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: _store.eventos.length,
+          itemBuilder: (context, index) {
+            return _listaEventos(context, index, _store);
+          },
+        );
+      }),
     );
   }
 
-  _listaEventos(BuildContext context, int index) {
+  _listaEventos(BuildContext context, int index, EventosStore store) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -73,59 +56,56 @@ class _ListaEventos extends State<ListaEventos> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: eventos[index].imagem != null
-                            ? FileImage(File(eventos[index].imagem))
+                        image: store.eventos[index].imagem != null
+                            ? FileImage(File(store.eventos[index].imagem))
                             : AssetImage("images/evento.png")),
                   ),
                 ),
-                Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(eventos[index].nome ?? "",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        Text(eventos[index].data?.toShortStringDateTime ?? "",
-                            style: const TextStyle(fontSize: 17)),
-                        Text(eventos[index].responsavel ?? "",
-                            style: const TextStyle(fontSize: 11)),
-                      ],
-                    )),
-                IconButton(
-                  icon: Icon(Icons.delete_forever),
-                  onPressed: () {
-                    _confirmaExclusao(context, eventos[index].id, index);
-                  },
+                Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(store.eventos[index].nome ?? "",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              )),
+                          Text(
+                              store.eventos[index].data
+                                      ?.toShortStringDateTime ??
+                                  "",
+                              style: const TextStyle(fontSize: 17)),
+                          Text(store.eventos[index].responsavel ?? "",
+                              style: const TextStyle(fontSize: 11)),
+                        ],
+                      )),
+                ),
+                Container(
+                  width: 60.0,
+                  height: 80.0,
+                  child: IconButton(
+                    icon: Icon(Icons.delete_forever),
+                    onPressed: () {
+                      _confirmaExclusao(
+                          context, store.eventos[index].id, store);
+                    },
+                  ),
                 )
               ],
             )),
       ),
       onTap: () {
-        _exibeEventoPage(evento: eventos[index]);
+        AppRouter.gotoParams(
+          nomeRota: rotaEvento,
+          parametros: store.eventos[index],
+        );
       },
     );
   }
 
-  void _exibeEventoPage({Evento evento}) async {
-    final eventoRecebido = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EventoPage(evento: evento)),
-    );
-
-    if (eventoRecebido != null) {
-      if (evento != null) {
-        await db.updateEvento(eventoRecebido);
-      } else {
-        await db.insertEvento(eventoRecebido);
-      }
-      _exibeTodosEventos();
-    }
-  }
-
-  void _confirmaExclusao(BuildContext context, int eventoid, index) {
+  void _confirmaExclusao(BuildContext context, int id, EventosStore store) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -140,11 +120,9 @@ class _ListaEventos extends State<ListaEventos> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
-              onPressed: () {
-                setState(() {
-                  eventos.removeAt(index);
-                  db.deleteEvento(eventoid);
-                });
+              onPressed: () async {
+                await store.deletar(id);
+
                 Navigator.of(context).pop();
               },
             ),
@@ -159,13 +137,13 @@ class _ListaEventos extends State<ListaEventos> {
                 Navigator.of(context).pop();
               },
             ),
-          ], //widget
+          ],
         );
       },
     );
   }
 }
-
+ 
 /* ,
                             style: TextStyle(
                               fontSize: 20,

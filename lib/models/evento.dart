@@ -11,14 +11,14 @@ class Evento {
   String imagem;
   BoolValueObject ativo;
 
-  Evento({
+  Evento(
     this.nome,
     this.responsavel,
     this.descricao,
     this.data,
     this.imagem,
     this.ativo,
-  });
+  );
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{

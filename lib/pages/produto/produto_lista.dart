@@ -95,7 +95,7 @@ class ListaProdutos extends StatelessWidget {
       onTap: () {
         AppRouter.gotoParams(
           nomeRota: rotaProduto,
-          parametros: [store.produtos[index]],
+          parametros: store.produtos[index],
         );
       },
     );

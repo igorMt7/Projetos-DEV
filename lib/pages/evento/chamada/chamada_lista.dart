@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
 import 'package:partilhe/models/cadastro.dart';
 
@@ -10,7 +11,7 @@ class Chamada extends StatefulWidget {
 }
 
 class _ChamadaState extends State<Chamada> {
-  DatabaseHelper db = DatabaseHelper();
+  final db = GetIt.I<DatabaseHelper>();
   List<Cadastro> cadastros = <Cadastro>[];
 
   @override
