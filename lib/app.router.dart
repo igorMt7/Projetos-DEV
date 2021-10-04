@@ -115,7 +115,17 @@ class AppRouter {
 
   static Scaffold _routeringError(RouteSettings settings) {
     return Scaffold(
-      body: Center(child: Text('No route defined for ${settings.name}')),
+      body: Center(
+          child: Column(
+        children: [
+          Text('No route defined for ${settings.name}'),
+          TextButton(
+              onPressed: () {
+                AppRouter.gotoPush(nomeRota: rotaDashboard);
+              },
+              child: const Text('Voltar'))
+        ],
+      )),
     );
   }
 }

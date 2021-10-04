@@ -1,47 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
-import 'package:partilhe/helpers/database/database_helper.dart';
-import 'package:partilhe/models/cadastro.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
 
-class Chamada extends StatefulWidget {
-  @override
-  _ChamadaState createState() => _ChamadaState();
-}
-
-class _ChamadaState extends State<Chamada> {
-  final db = GetIt.I<DatabaseHelper>();
-  List<Cadastro> cadastros = <Cadastro>[];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _exibeTodosCadastros();
-  }
-
-  void _exibeTodosCadastros() {
-    db.getCadastros().then((lista) {
-      setState(() {
-        cadastros = lista;
-      });
-    });
-  }
-
-  Color getColor(Set<MaterialState> states) {
-    Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return Colors.blue;
-    }
-    return Colors.green;
-  }
-
-  bool ischeck = false;
+class Chamada extends StatelessWidget {
+  final _store = GetIt.I<CadastrosStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,73 +19,64 @@ class _ChamadaState extends State<Chamada> {
         title: Text("Lista de Chamada"),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
-        itemCount: cadastros.length,
-        itemBuilder: (context, index) {
-          return _listaCadastros(context, index);
-        },
-      ),
-    );
-  }
-
-  _listaCadastros(BuildContext context, int index) {
-    return GestureDetector(
-      child: Card(
-        color: ischeck == true ? Colors.lightGreen[200] : Colors.white,
-        child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  width: 60.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: cadastros[index].imagem != null
-                            ? FileImage(File(cadastros[index].imagem))
-                            : AssetImage("images/cadastro.png")),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: Observer(builder: (context) {
+        return ListView.builder(
+          padding: EdgeInsets.all(10.0),
+          itemCount: _store.cadastros.length,
+          itemBuilder: (context, index) {
+            final cadastroStore = _store.cadastros[index];
+            return GestureDetector(
+              child: Card(
+                color: cadastroStore.isChecked
+                    ? Colors.lightGreen[200]
+                    : Colors.white,
+                child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Text(cadastros[index].nome ?? "",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        SizedBox(
-                          height: 10,
+                        Container(
+                          width: 60.0,
+                          height: 80.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: cadastroStore.imagem != null
+                                    ? FileImage(File(cadastroStore.imagem))
+                                    : AssetImage("images/cadastro.png")),
+                          ),
                         ),
-                        Text(cadastros[index].endereco ?? "",
-                            style: TextStyle(fontSize: 11)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(cadastroStore.nome ?? "",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(cadastroStore.endereco ?? "",
+                                    style: TextStyle(fontSize: 11)),
+                              ],
+                            )),
+                        Visibility(
+                          visible: cadastroStore.isChecked,
+                          child: Icon(Icons.check),
+                        )
                       ],
                     )),
-                Column(
-                  children: [
-                    Visibility(
-                      visible: ischeck,
-                      child: Icon(Icons.check),
-                    ),
-                  ],
-                )
-              ],
-            )),
-      ),
-      onTap: () {
-        setState(() {
-          if (ischeck == true) {
-            ischeck = false;
-          } else {
-            ischeck = true;
-          }
-        });
-      },
+              ),
+              onTap: () {
+                cadastroStore.check();
+              },
+            );
+          },
+        );
+      }),
     );
   }
 }

@@ -114,11 +114,40 @@ mixin _$CadastroStore on _CadastroStoreBase, Store {
     });
   }
 
+  final _$isCheckedAtom = Atom(name: '_CadastroStoreBase.isChecked');
+
+  @override
+  bool get isChecked {
+    _$isCheckedAtom.reportRead();
+    return super.isChecked;
+  }
+
+  @override
+  set isChecked(bool value) {
+    _$isCheckedAtom.reportWrite(value, super.isChecked, () {
+      super.isChecked = value;
+    });
+  }
+
   final _$salvarAsyncAction = AsyncAction('_CadastroStoreBase.salvar');
 
   @override
   Future<void> salvar() {
     return _$salvarAsyncAction.run(() => super.salvar());
+  }
+
+  final _$_CadastroStoreBaseActionController =
+      ActionController(name: '_CadastroStoreBase');
+
+  @override
+  dynamic check() {
+    final _$actionInfo = _$_CadastroStoreBaseActionController.startAction(
+        name: '_CadastroStoreBase.check');
+    try {
+      return super.check();
+    } finally {
+      _$_CadastroStoreBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
@@ -130,7 +159,8 @@ endereco: ${endereco},
 telefone: ${telefone},
 veste: ${veste},
 email: ${email},
-imagem: ${imagem}
+imagem: ${imagem},
+isChecked: ${isChecked}
     ''';
   }
 }

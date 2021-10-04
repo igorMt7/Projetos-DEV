@@ -51,6 +51,9 @@ abstract class _CadastroStoreBase with Store {
   @observable
   String imagem;
 
+  @observable
+  bool isChecked = false;
+
   @action
   Future<void> salvar() async {
     if (id != null && id > 0) {
@@ -59,6 +62,16 @@ abstract class _CadastroStoreBase with Store {
       final id = await _db.insertCadastro(this.toModel());
       this.id = id;
     }
+    GetIt.I.get<CadastrosStore>().atualizarLista(this);
+  }
+
+  @action
+  check() {
+    if (isChecked)
+      isChecked = false;
+    else
+      isChecked = true;
+
     GetIt.I.get<CadastrosStore>().atualizarLista(this);
   }
 
