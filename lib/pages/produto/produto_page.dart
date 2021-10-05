@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:partilhe/pages/produto/stores/produto_store.dart';
 
@@ -35,17 +36,19 @@ class ProdutoPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 GestureDetector(
-                  child: Container(
-                    width: 100.0,
-                    height: 128.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: produto.imagem != null
-                              ? FileImage(File(produto.imagem))
-                              : AssetImage("images/produto.png")),
-                    ),
-                  ),
+                  child: Observer(builder: (context) {
+                    return Container(
+                      width: 100.0,
+                      height: 128.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: produto.imagem != null
+                                ? FileImage(File(produto.imagem))
+                                : AssetImage("images/produto.png")),
+                      ),
+                    );
+                  }),
                   onTap: () {
                     ImagePicker()
                         .pickImage(source: ImageSource.gallery)

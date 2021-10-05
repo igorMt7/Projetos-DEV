@@ -49,17 +49,19 @@ class ListaProdutos extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Container(
-                  width: 60.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: store.produtos[index].imagem != null
-                            ? FileImage(File(store.produtos[index].imagem))
-                            : AssetImage("images/produto.png")),
-                  ),
-                ),
+                Observer(builder: (context) {
+                  return Container(
+                    width: 60.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: store.produtos[index].imagem != null
+                              ? FileImage(File(store.produtos[index].imagem))
+                              : AssetImage("images/produto.png")),
+                    ),
+                  );
+                }),
                 Expanded(
                   child: Padding(
                       padding: EdgeInsets.only(left: 10.0),

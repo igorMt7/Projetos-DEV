@@ -50,38 +50,46 @@ class Chamada extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
+                        Observer(builder: (context) {
+                          return Container(
+                            width: 60.0,
+                            height: 80.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: cadastroStore.imagem != null
+                                      ? FileImage(File(cadastroStore.imagem))
+                                      : AssetImage("images/cadastro.png")),
+                            ),
+                          );
+                        }),
+                        Expanded(
+                          child: Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(cadastroStore.nome ?? "",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(cadastroStore.endereco ?? "",
+                                      style: TextStyle(fontSize: 11)),
+                                ],
+                              )),
+                        ),
                         Container(
                           width: 60.0,
                           height: 80.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: cadastroStore.imagem != null
-                                    ? FileImage(File(cadastroStore.imagem))
-                                    : AssetImage("images/cadastro.png")),
+                          child: Visibility(
+                            visible: cadastroStore.isChecked,
+                            child: Icon(Icons.check),
                           ),
                         ),
-                        Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(cadastroStore.nome ?? "",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(cadastroStore.endereco ?? "",
-                                    style: TextStyle(fontSize: 11)),
-                              ],
-                            )),
-                        Visibility(
-                          visible: cadastroStore.isChecked,
-                          child: Icon(Icons.check),
-                        )
                       ],
                     )),
               ),

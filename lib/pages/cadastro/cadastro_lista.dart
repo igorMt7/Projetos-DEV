@@ -51,17 +51,19 @@ class ListaAssistidos extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    width: 60.0,
-                    height: 80.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: store.cadastros[index].imagem != null
-                              ? FileImage(File(store.cadastros[index].imagem))
-                              : AssetImage("images/cadastro.png")),
-                    ),
-                  ),
+                  Observer(builder: (context) {
+                    return Container(
+                      width: 60.0,
+                      height: 80.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: store.cadastros[index].imagem != null
+                                ? FileImage(File(store.cadastros[index].imagem))
+                                : AssetImage("images/cadastro.png")),
+                      ),
+                    );
+                  }),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 10.0),

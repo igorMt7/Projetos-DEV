@@ -20,9 +20,7 @@ tamanho de roupa
 
 2 - Relatórios básicos:
 
-Maior frequência.
-
-Menor frequência.
+Maior frequência/Menor frequência (evento)
 
 Numero de dependentes.
 

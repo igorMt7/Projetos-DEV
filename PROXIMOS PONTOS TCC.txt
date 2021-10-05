@@ -1,15 +1,18 @@
-esconder botão de REALIZAR CHAMADA quando EVENTO ainda não estiver salvo, exibir apenas no EDITAR EVENTO. (visibility)
+esconder botão de REALIZAR CHAMADA quando EVENTO ainda não estiver salvo, exibir apenas 
+no EDITAR EVENTO. (OK)
 
 Right overflowed by xx pixels (OK)
 
 DATEPICKER nos campos DATA. (EVENTO OK)
 
-solucionar a passagem de dados dos ON TAP para marcar apenas por INDEX/ID e enviando ao BD.
+solucionar a passagem de dados dos ON TAP para marcar apenas por INDEX/ID e enviando ao BD. (OK)
 
-adicionar campo "ativo/encerrado?" ao evento para poder filtrar eventos na EVENTO_LISTA, trazendo apenas ativos. (ok)
+adicionar campo "ativo/encerrado?" ao evento para poder filtrar 
+eventos na EVENTO_LISTA, trazendo apenas ativos. (ok)
 
 
-Criar segunda tela de EVENTOS PASSADOS que permite recuperar dados ou editar eles, mostrando quem foi chamado na ocasião.
+Criar segunda tela de EVENTOS PASSADOS que permite recuperar dados ou editar eles, 
+mostrando quem foi chamado na ocasião.
 
 como salvar BOOL no BD, como salvar DATETIME no BD. (OK)
 

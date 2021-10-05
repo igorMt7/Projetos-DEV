@@ -50,17 +50,19 @@ class ListaEventos extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Container(
-                  width: 60.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: store.eventos[index].imagem != null
-                            ? FileImage(File(store.eventos[index].imagem))
-                            : AssetImage("images/evento.png")),
-                  ),
-                ),
+                Observer(builder: (context) {
+                  return Container(
+                    width: 60.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: store.eventos[index].imagem != null
+                              ? FileImage(File(store.eventos[index].imagem))
+                              : AssetImage("images/evento.png")),
+                    ),
+                  );
+                }),
                 Expanded(
                   child: Padding(
                       padding: EdgeInsets.only(left: 10.0),

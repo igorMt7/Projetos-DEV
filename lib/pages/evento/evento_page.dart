@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:flutter/material.dart';
@@ -39,17 +40,19 @@ class EventoPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 GestureDetector(
-                  child: Container(
-                    width: 100.0,
-                    height: 128.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: evento.imagem != null
-                              ? FileImage(File(evento.imagem))
-                              : AssetImage("images/evento.png")),
-                    ),
-                  ),
+                  child: Observer(builder: (context) {
+                    return Container(
+                      width: 100.0,
+                      height: 128.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: evento.imagem != null
+                                ? FileImage(File(evento.imagem))
+                                : AssetImage("images/evento.png")),
+                      ),
+                    );
+                  }),
                   onTap: () {
                     ImagePicker()
                         .pickImage(source: ImageSource.gallery)
