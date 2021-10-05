@@ -26,6 +26,8 @@ class Chamada extends StatelessWidget {
               backgroundColor: Colors.red.withOpacity(.7),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            Navigator.of(context).pop();
           }
         },
         child: Icon(Icons.save),

@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:partilhe/helpers/value_objects/bool_value_object.dart';
 import 'package:partilhe/pages/cadastro/stores/cadastro_store.dart';
 
 class CadastroPage extends StatelessWidget {
@@ -9,14 +11,9 @@ class CadastroPage extends StatelessWidget {
 
   CadastroPage({this.cadastro});
 
-  final _nomeFocus = FocusNode();
-  final _enderecoFocus = FocusNode();
-  final _telefoneFocus = FocusNode();
-  final _vesteFocus = FocusNode();
-  final _emailFocus = FocusNode();
-
   @override
   Widget build(BuildContext context) {
+    final _sizes = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
@@ -25,25 +22,28 @@ class CadastroPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            // if (!VerificaNuloVazio.ehNuloOuVazio(cadastro.nome) &&
-            //     cadastro.nome.length < 25) {
-            await cadastro.salvar();
-            Navigator.pop(context);
-            // } else {
-            //   _exibeAviso();
-            //   FocusScope.of(context).requestFocus(_nomeFocus);
-            // }
+            final response = await cadastro.salvar();
+            if (!response) {
+              final snackBar = SnackBar(
+                content: const Text('É necessário informar o CPF!'),
+                backgroundColor: Colors.red.withOpacity(.7),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else {
+              Navigator.pop(context);
+            }
           },
           child: Icon(Icons.save),
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
-        body: SingleChildScrollView(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              children: <Widget>[
-                GestureDetector(
-                  child: Container(
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            children: <Widget>[
+              GestureDetector(
+                child: Observer(builder: (_) {
+                  return Container(
                     width: 100.0,
                     height: 128.0,
                     decoration: BoxDecoration(
@@ -53,79 +53,102 @@ class CadastroPage extends StatelessWidget {
                               ? FileImage(File(cadastro.imagem))
                               : AssetImage("images/cadastro.png")),
                     ),
-                  ),
-                  onTap: () {
-                    ImagePicker()
-                        .pickImage(source: ImageSource.gallery)
-                        .then((file) {
-                      if (file == null) return;
-                      cadastro.imagem = file.path;
-                    });
-                  },
+                  );
+                }),
+                onTap: () {
+                  ImagePicker()
+                      .pickImage(source: ImageSource.gallery)
+                      .then((file) {
+                    if (file == null) return;
+                    cadastro.imagem = file.path;
+                  });
+                },
+              ),
+              TextFormField(
+                initialValue: cadastro.nome,
+                maxLength: 24,
+                decoration: InputDecoration(labelText: "Nome"),
+                onChanged: (value) => cadastro.nome = value,
+              ),
+              TextFormField(
+                initialValue: cadastro.cpf,
+                maxLength: 11,
+                decoration: InputDecoration(labelText: "CPF"),
+                onChanged: (value) => cadastro.cpf = value,
+              ),
+              TextFormField(
+                initialValue: cadastro.endereco,
+                decoration: InputDecoration(labelText: "Endereço"),
+                onChanged: (value) => cadastro.endereco = value,
+              ),
+              TextFormField(
+                initialValue: cadastro.telefone,
+                decoration: InputDecoration(labelText: "Telefone/WhatsApp"),
+                onChanged: (value) => cadastro.telefone = value,
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                initialValue: cadastro.dependentes,
+                decoration: InputDecoration(labelText: "Número de dependentes"),
+                onChanged: (value) => cadastro.dependentes = value,
+                keyboardType: TextInputType.number,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: const Text('Emprego fixo?'),
+                    ),
+                    Observer(builder: (_) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            width: _sizes.width * .35,
+                            child: CheckboxListTile(
+                                title: const Text('Não'),
+                                activeColor: Theme.of(context).primaryColor,
+                                value: cadastro.empregoFixo.toBool == false,
+                                onChanged: (value) {
+                                  if (!cadastro.empregoFixo.toBool) return;
+                                  cadastro.empregoFixo =
+                                      BoolValueObject.fromBool(!value);
+                                }),
+                          ),
+                          Container(
+                            width: _sizes.width * .35,
+                            child: CheckboxListTile(
+                                title: const Text('Sim'),
+                                activeColor: Theme.of(context).primaryColor,
+                                value: cadastro.empregoFixo.toBool == true,
+                                onChanged: (value) {
+                                  if (cadastro.empregoFixo.toBool) return;
+                                  cadastro.empregoFixo =
+                                      BoolValueObject.fromBool(value);
+                                }),
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
                 ),
-                TextFormField(
-                  initialValue: cadastro.nome,
-                  focusNode: _nomeFocus,
-                  maxLength: 24,
-                  decoration: InputDecoration(labelText: "Nome"),
-                  onChanged: (value) => cadastro.nome = value,
-                ),
-                TextFormField(
-                  initialValue: cadastro.endereco,
-                  focusNode: _enderecoFocus,
-                  decoration: InputDecoration(labelText: "Endereço"),
-                  onChanged: (value) => cadastro.endereco = value,
-                ),
-                TextFormField(
-                  initialValue: cadastro.telefone,
-                  focusNode: _telefoneFocus,
-                  decoration: InputDecoration(labelText: "Telefone/WhatsApp"),
-                  onChanged: (value) => cadastro.telefone = value,
-                  keyboardType: TextInputType.number,
-                ),
-                TextFormField(
-                  initialValue: cadastro.veste,
-                  focusNode: _vesteFocus,
-                  decoration:
-                      InputDecoration(labelText: "Número ou tamanho da roupa:"),
-                  onChanged: (value) => cadastro.veste = value,
-                ),
-                TextFormField(
-                  initialValue: cadastro.email,
-                  focusNode: _emailFocus,
-                  decoration: InputDecoration(labelText: "Email"),
-                  onChanged: (value) => cadastro.email = value,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-              ],
-            )));
+              ),
+              TextFormField(
+                initialValue: cadastro.veste,
+                decoration:
+                    InputDecoration(labelText: "Número ou tamanho da roupa"),
+                onChanged: (value) => cadastro.veste = value,
+              ),
+              TextFormField(
+                initialValue: cadastro.email,
+                decoration: InputDecoration(labelText: "Email"),
+                onChanged: (value) => cadastro.email = value,
+                keyboardType: TextInputType.emailAddress,
+              ),
+            ],
+          ),
+        ));
   }
-
-  // void _exibeAviso() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: new Text("Problemas com o NOME:"),
-  //         content: new Text("Informe um nome válido menor que 25 letras"),
-  //         actions: <Widget>[
-  //           new FloatingActionButton.extended(
-  //             backgroundColor: Theme.of(context).primaryColor,
-  //             foregroundColor: Theme.of(context).accentColor,
-  //             label: new Text(
-  //               "Fechar",
-  //               style: TextStyle(
-  //                 fontSize: 15,
-  //                 fontWeight: FontWeight.bold,
-  //               ),
-  //             ),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 }

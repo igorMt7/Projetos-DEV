@@ -34,8 +34,8 @@ mixin _$CadastrosStore on _CadastrosStoreBase, Store {
   final _$deletarAsyncAction = AsyncAction('_CadastrosStoreBase.deletar');
 
   @override
-  Future<dynamic> deletar(int id) {
-    return _$deletarAsyncAction.run(() => super.deletar(id));
+  Future<dynamic> deletar(String cpf) {
+    return _$deletarAsyncAction.run(() => super.deletar(cpf));
   }
 
   final _$_CadastrosStoreBaseActionController =

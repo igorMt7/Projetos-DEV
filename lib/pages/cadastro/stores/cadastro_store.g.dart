@@ -9,21 +9,6 @@ part of 'cadastro_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$CadastroStore on _CadastroStoreBase, Store {
-  final _$idAtom = Atom(name: '_CadastroStoreBase.id');
-
-  @override
-  int get id {
-    _$idAtom.reportRead();
-    return super.id;
-  }
-
-  @override
-  set id(int value) {
-    _$idAtom.reportWrite(value, super.id, () {
-      super.id = value;
-    });
-  }
-
   final _$nomeAtom = Atom(name: '_CadastroStoreBase.nome');
 
   @override
@@ -114,6 +99,51 @@ mixin _$CadastroStore on _CadastroStoreBase, Store {
     });
   }
 
+  final _$cpfAtom = Atom(name: '_CadastroStoreBase.cpf');
+
+  @override
+  String get cpf {
+    _$cpfAtom.reportRead();
+    return super.cpf;
+  }
+
+  @override
+  set cpf(String value) {
+    _$cpfAtom.reportWrite(value, super.cpf, () {
+      super.cpf = value;
+    });
+  }
+
+  final _$dependentesAtom = Atom(name: '_CadastroStoreBase.dependentes');
+
+  @override
+  String get dependentes {
+    _$dependentesAtom.reportRead();
+    return super.dependentes;
+  }
+
+  @override
+  set dependentes(String value) {
+    _$dependentesAtom.reportWrite(value, super.dependentes, () {
+      super.dependentes = value;
+    });
+  }
+
+  final _$empregoFixoAtom = Atom(name: '_CadastroStoreBase.empregoFixo');
+
+  @override
+  BoolValueObject get empregoFixo {
+    _$empregoFixoAtom.reportRead();
+    return super.empregoFixo;
+  }
+
+  @override
+  set empregoFixo(BoolValueObject value) {
+    _$empregoFixoAtom.reportWrite(value, super.empregoFixo, () {
+      super.empregoFixo = value;
+    });
+  }
+
   final _$isCheckedAtom = Atom(name: '_CadastroStoreBase.isChecked');
 
   @override
@@ -132,7 +162,7 @@ mixin _$CadastroStore on _CadastroStoreBase, Store {
   final _$salvarAsyncAction = AsyncAction('_CadastroStoreBase.salvar');
 
   @override
-  Future<void> salvar() {
+  Future<bool> salvar() {
     return _$salvarAsyncAction.run(() => super.salvar());
   }
 
@@ -153,13 +183,15 @@ mixin _$CadastroStore on _CadastroStoreBase, Store {
   @override
   String toString() {
     return '''
-id: ${id},
 nome: ${nome},
 endereco: ${endereco},
 telefone: ${telefone},
 veste: ${veste},
 email: ${email},
 imagem: ${imagem},
+cpf: ${cpf},
+dependentes: ${dependentes},
+empregoFixo: ${empregoFixo},
 isChecked: ${isChecked}
     ''';
   }

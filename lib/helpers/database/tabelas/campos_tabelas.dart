@@ -1,5 +1,6 @@
 const String cadastroTable = 'cadastro';
 const String produtoTable = 'produto';
+const String chamadasTable = 'chamadas';
 const String colId = 'id';
 const String colNome = 'nome';
 const String colEndereco = 'endereco';
@@ -12,7 +13,8 @@ const String colResponsavel = 'responsavel';
 const String colDescricao = 'descricao';
 const String colQuantidade = 'quantidade';
 const String colData = 'data';
-const String chamadasTable = 'chamadas';
-const String colIdCadastro = 'idCadastro';
 const String colIdEvento = 'idEvento';
 const String colAtivo = 'ativo';
+const String colCPF = 'cpf';
+const String colDependentes = 'dependentes';
+const String colEmpregoFixo = 'empregoFixo';

@@ -90,7 +90,7 @@ class ListaAssistidos extends StatelessWidget {
                       icon: Icon(Icons.delete_forever),
                       onPressed: () {
                         _confirmaExclusao(
-                            context, store.cadastros[index].id, store);
+                            context, store.cadastros[index].cpf, store);
                       },
                     ),
                   )
@@ -107,7 +107,8 @@ class ListaAssistidos extends StatelessWidget {
     );
   }
 
-  void _confirmaExclusao(BuildContext context, int id, CadastrosStore store) {
+  void _confirmaExclusao(
+      BuildContext context, String cpf, CadastrosStore store) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -123,7 +124,7 @@ class ListaAssistidos extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10)),
               label: Text("SIM", style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () async {
-                await store.deletar(id);
+                await store.deletar(cpf);
                 Navigator.of(context).pop();
               },
             ),

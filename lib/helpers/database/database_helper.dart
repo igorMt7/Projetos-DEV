@@ -63,12 +63,33 @@ class DatabaseHelper {
     }
   }
 
-//Incluir um objeto cadastro no banco de dados
-  Future<int> insertCadastro(Cadastro cadastro) async {
-    Database db = await this.database;
+  //Incluir um objeto cadastro no banco de dados
+  // Future<int> insertCadastro(Cadastro cadastro) async {
+  //   Database db = await this.database;
 
-    var resultado = await db.insert(cadastroTable, cadastro.toMap());
-    return resultado;
+  //   var resultado = await db.insert(cadastroTable, cadastro.toMap());
+  //   return resultado;
+  // }
+
+  Future mergeCadastro(Cadastro cadastro) async {
+    Database db = await this.database;
+    final sql = '''
+      INSERT OR REPLACE INTO cadastro 
+       ($colCPF, $colNome, $colEndereco, $colTelefone, $colVeste, 
+        $colEmail, $colImagem, $colDependentes, $colEmpregoFixo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    ''';
+    await db.execute(sql, [
+      cadastro.cpf,
+      cadastro.nome,
+      cadastro.endereco,
+      cadastro.telefone,
+      cadastro.veste,
+      cadastro.email,
+      cadastro.imagem,
+      cadastro.dependentes,
+      cadastro.empregoFixo.toBool,
+    ]);
   }
 
 //retorna um cadastro pelo id
@@ -83,7 +104,10 @@ class DatabaseHelper {
           colTelefone,
           colVeste,
           colEmail,
-          colImagem
+          colImagem,
+          colCPF,
+          colDependentes,
+          colEmpregoFixo,
         ],
         where: "$colId = ?",
         whereArgs: [id]);
@@ -108,17 +132,17 @@ class DatabaseHelper {
   }
 
   //Atualiza o objeto Cadastro e salva no banco de dados
-  Future<int> updateCadastro(Cadastro cadastro) async {
-    var db = await this.database;
+  // Future<int> updateCadastro(Cadastro cadastro) async {
+  //   var db = await this.database;
 
-    var resultado = await db.update(cadastroTable, cadastro.toMap(),
-        where: '$colId = ?', whereArgs: [cadastro.id]);
+  //   var resultado = await db.update(cadastroTable, cadastro.toMap(),
+  //       where: '$colId = ?', whereArgs: [cadastro.id]);
 
-    return resultado;
-  }
+  //   return resultado;
+  // }
 
   //Deleta um objeto Cadastro do banco de dados
-  Future<int> deleteCadastro(int id) async {
+  Future<int> deleteCadastro(String id) async {
     var db = await this.database;
 
     int resultado =
@@ -279,14 +303,14 @@ class DatabaseHelper {
   }
 
   Future<bool> insertChamada(List<Chamada> chamada) async {
-    final sql = 'INSERT INTO chamadas (IdCadastro, IdEvento) VALUES (?, ?)';
+    final sql = 'INSERT OR REPLACE INTO chamadas (cpf, IdEvento) VALUES (?, ?)';
     try {
       Database db = await this.database;
       if (chamada.isNotEmpty) {
         await db.transaction((txn) async {
           final batch = txn.batch();
           chamada.forEach((e) {
-            batch.rawInsert(sql, [e.idCadastro, e.idEvento]);
+            batch.rawInsert(sql, [e.cpf, e.idEvento]);
           });
           await batch.commit(noResult: true);
         });
@@ -295,8 +319,10 @@ class DatabaseHelper {
       return false;
     } on DatabaseException catch (e) {
       print(e);
+      return false;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 

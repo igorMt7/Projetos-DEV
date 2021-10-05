@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:partilhe/app.router.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
+import 'package:partilhe/helpers/value_objects/bool_value_object.dart';
 import 'package:partilhe/models/cadastro.dart';
 import 'package:partilhe/pages/cadastro/stores/cadastro_store.dart';
 import 'package:partilhe/routes/rotas.dart';
@@ -33,7 +34,7 @@ abstract class _CadastrosStoreBase with Store {
 
   @action
   atualizarLista(CadastroStore cadastro) {
-    int index = cadastros.indexWhere((e) => e.id == cadastro.id);
+    int index = cadastros.indexWhere((e) => e.cpf == cadastro.cpf);
     if (index < 0) {
       index = 0;
     } else {
@@ -44,10 +45,10 @@ abstract class _CadastrosStoreBase with Store {
   }
 
   @action
-  Future deletar(int id) async {
-    if (id != null || id > 0) {
-      final response = await _db.deleteCadastro(id);
-      if (response == 1) cadastros.removeWhere((e) => e.id == id);
+  Future deletar(String cpf) async {
+    if (cpf != null) {
+      final response = await _db.deleteCadastro(cpf);
+      if (response == 1) cadastros.removeWhere((e) => e.cpf == cpf);
     }
   }
 
@@ -56,13 +57,15 @@ abstract class _CadastrosStoreBase with Store {
     AppRouter.gotoParams(
       nomeRota: rotaCadastro,
       parametros: CadastroStore(
-        id: null,
         nome: '',
         email: '',
         endereco: '',
         imagem: null,
         telefone: '',
         veste: '',
+        cpf: '',
+        dependentes: '',
+        empregoFixo: BoolValueObject.fromBool(false),
       ),
     );
   }

@@ -1,22 +1,19 @@
 class Chamada {
-  int id;
-  int idCadastro;
+  String cpf;
   int idEvento;
 
-  Chamada(this.idCadastro, this.idEvento);
+  Chamada(this.cpf, this.idEvento);
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      'id': id,
-      'idCadastro': idCadastro,
+      'cpf': cpf,
       'idEvento': idEvento,
     };
     return map;
   }
 
   Chamada.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    idCadastro = map['idCadastro'];
+    cpf = map['cpf'];
     idEvento = map['idEvento'];
   }
 }

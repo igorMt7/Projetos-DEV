@@ -19,7 +19,7 @@ abstract class _ChamadaStoreBase with Store {
 
     if (cadastrosStore.cadastros.isNotEmpty) {
       cadastrosStore.cadastros.forEach((e) {
-        if (e.isChecked) listaPresentes.add(Chamada(e.id, idEvento));
+        if (e.isChecked) listaPresentes.add(Chamada(e.cpf, idEvento));
       });
     }
 
