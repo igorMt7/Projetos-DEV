@@ -4,15 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
+import 'package:partilhe/pages/evento/chamada/stores/chamada_store.dart';
 
 class Chamada extends StatelessWidget {
+  final int idEvento;
   final _store = GetIt.I<CadastrosStore>();
+  final chamadaStore = GetIt.I<ChamadaStore>();
+
+  Chamada({@required this.idEvento});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () async {
+          final response = await chamadaStore.salvarChamada(idEvento);
+          if (!response) {
+            final snackBar = SnackBar(
+              content: const Text(
+                  'É necessário marcar ao menos uma pessoa na lista de presença!'),
+              backgroundColor: Colors.red.withOpacity(.7),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        },
         child: Icon(Icons.save),
       ),
       appBar: AppBar(

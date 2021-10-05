@@ -7,6 +7,7 @@ import 'package:partilhe/helpers/database/tabelas/chamadas.dart';
 import 'package:partilhe/helpers/database/tabelas/evento.dart';
 import 'package:partilhe/helpers/database/tabelas/produto.dart';
 import 'package:partilhe/models/cadastro.dart';
+import 'package:partilhe/models/chamada.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:partilhe/models/produto.dart';
 import 'package:path_provider/path_provider.dart';
@@ -275,6 +276,28 @@ class DatabaseHelper {
 
     int resultado = Sqflite.firstIntValue(x);
     return resultado;
+  }
+
+  Future<bool> insertChamada(List<Chamada> chamada) async {
+    final sql = 'INSERT INTO chamadas (IdCadastro, IdEvento) VALUES (?, ?)';
+    try {
+      Database db = await this.database;
+      if (chamada.isNotEmpty) {
+        await db.transaction((txn) async {
+          final batch = txn.batch();
+          chamada.forEach((e) {
+            batch.rawInsert(sql, [e.idCadastro, e.idEvento]);
+          });
+          await batch.commit(noResult: true);
+        });
+        return true;
+      }
+      return false;
+    } on DatabaseException catch (e) {
+      print(e);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future close() async {

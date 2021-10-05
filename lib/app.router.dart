@@ -105,7 +105,7 @@ class AppRouter {
         );
       case rotaChamada:
         return MaterialPageRoute(
-          builder: (_) => Chamada(),
+          builder: (_) => Chamada(idEvento: configuracoes.arguments),
         );
       default:
         return MaterialPageRoute(

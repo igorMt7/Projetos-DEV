@@ -1,10 +1,9 @@
 class Chamada {
   int id;
-  String idCadastro;
-  String idEvento;
-  bool checked;
+  int idCadastro;
+  int idEvento;
 
-  Chamada(this.idCadastro, this.idEvento, {this.checked = false});
+  Chamada(this.idCadastro, this.idEvento);
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{

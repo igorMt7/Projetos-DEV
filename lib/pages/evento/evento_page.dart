@@ -138,7 +138,10 @@ class EventoPage extends StatelessWidget {
                     child: Material(
                       child: InkWell(
                         onTap: () {
-                          AppRouter.gotoPush(nomeRota: rotaChamada);
+                          AppRouter.gotoParams(
+                            nomeRota: rotaChamada,
+                            parametros: evento.id,
+                          );
                         },
                         child: Container(
                           decoration: new BoxDecoration(
