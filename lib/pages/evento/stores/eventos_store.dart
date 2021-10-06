@@ -23,7 +23,7 @@ abstract class _EventosStoreBase with Store {
 
   @action
   Future<List<Evento>> iniciar() async {
-    final response = await _db.getEventos();
+    final response = await _db.getEventos(ativo: true);
     if (response != null) {
       response.forEach((e) {
         eventos.add(eventoStoreFromModel(e));
@@ -42,7 +42,10 @@ abstract class _EventosStoreBase with Store {
       eventos.removeAt(index);
     }
 
-    eventos.insert(index, evento);
+    if (!evento.ativo.toBool)
+      return;
+    else
+      eventos.insert(index, evento);
   }
 
   @action

@@ -6,6 +6,9 @@ import 'package:partilhe/pages/dashboard.dart';
 import 'package:partilhe/pages/evento/chamada/chamada_lista.dart';
 import 'package:partilhe/pages/evento/evento_lista.dart';
 import 'package:partilhe/pages/evento/evento_page.dart';
+import 'package:partilhe/pages/evento_finalizado/chamada/chamada_finalizada_lista.dart';
+import 'package:partilhe/pages/evento_finalizado/evento_finalizado_page.dart';
+import 'package:partilhe/pages/evento_finalizado/evento_finalizados_lista.dart';
 import 'package:partilhe/pages/produto/produto_lista.dart';
 import 'package:partilhe/pages/produto/produto_page.dart';
 import 'package:partilhe/routes/rotas.dart';
@@ -57,20 +60,6 @@ class AppRouter {
 
   static gotoParams({@required String nomeRota, @required dynamic parametros}) {
     chaveDeNavegacao.currentState.pushNamed(nomeRota, arguments: parametros);
-    // switch (nomeRota) {
-    //   case rotaProduto:
-    //     chaveDeNavegacao.currentState
-    //         .pushNamed(nomeRota, arguments: parametros);
-    //     break;
-    //   case rotaEvento:
-    //     chaveDeNavegacao.currentState
-    //         .pushNamed(nomeRota, arguments: parametros);
-    //     break;
-    //   case rotaCadastro:
-    //     chaveDeNavegacao.currentState
-    //         .pushNamed(nomeRota, arguments: parametros);
-    //     break;
-    // }
   }
 
   static Route<dynamic> gerarRotas(RouteSettings configuracoes) {
@@ -107,6 +96,19 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => Chamada(idEvento: configuracoes.arguments),
         );
+      case rotaEventosFinalizados:
+        return MaterialPageRoute(
+          builder: (_) => ListaEventosFinalizados(),
+        );
+      case rotaEventoFinalizado:
+        return MaterialPageRoute(
+          builder: (_) => EventoFinalizadoPage(evento: configuracoes.arguments),
+        );
+      case rotaChamadaFinalizada:
+        return MaterialPageRoute(
+          builder: (_) =>
+              ChamadaEventoFinalizado(idEvento: configuracoes.arguments),
+        );
       default:
         return MaterialPageRoute(
             builder: (_) => _routeringError(configuracoes));
@@ -115,8 +117,8 @@ class AppRouter {
 
   static Scaffold _routeringError(RouteSettings settings) {
     return Scaffold(
-      body: Center(
-          child: Column(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('No route defined for ${settings.name}'),
           TextButton(
@@ -125,7 +127,7 @@ class AppRouter {
               },
               child: const Text('Voltar'))
         ],
-      )),
+      ),
     );
   }
 }

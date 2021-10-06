@@ -9,6 +9,6 @@ class TabelaCadastro {
       ' $colVeste TEXT,' +
       ' $colEmail TEXT,' +
       ' $colImagem TEXT,' +
-      ' $colDependentes INTEGER default 0,' +
-      ' $colEmpregoFixo BOOLEAN default 0)';
+      ' $colDependentes TEXT,' +
+      ' $colEmpregoFixo BOOLEAN )';
 }

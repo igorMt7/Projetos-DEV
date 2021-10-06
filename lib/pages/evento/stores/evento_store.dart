@@ -5,6 +5,7 @@ import 'package:partilhe/helpers/value_objects/bool_value_object.dart';
 import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:partilhe/pages/evento/stores/eventos_store.dart';
+import 'package:partilhe/pages/evento_finalizado/stores/eventos_finalizados_store.dart';
 part 'evento_store.g.dart';
 
 EventoStore eventoStoreFromModel(Evento model) => EventoStore(
@@ -62,6 +63,16 @@ abstract class _EventoStoreBase with Store {
       this.id = id;
     }
     GetIt.I.get<EventosStore>().atualizarLista(this);
+  }
+
+  @action
+  Future<void> finalizar(int id) async {
+    if (id != null && id > 0) {
+      this.ativo = BoolValueObject.fromBool(false);
+      await _db.finalizarEvento(id);
+      GetIt.I.get<EventosStore>().atualizarLista(this);
+      GetIt.I.get<EventosFinalizadosStore>().atualizarLista(this);
+    }
   }
 
   Evento toModel() => Evento(nome, responsavel, descricao, data, imagem, ativo);

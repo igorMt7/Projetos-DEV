@@ -1,20 +1,20 @@
 1 - Cadastro de assistidos (CRUD)
 
-CPF - Chave primária (devida necessidade).
+CPF - Chave primária (devida necessidade). OK
 
 Nome completo
 
-Endereço.
+Endereço. OK
 
-Numero de dependentes
+Numero de dependentes OK
 
-Emprego fixo?
+Emprego fixo? OK
 
-telefone
+telefone OK
 
-email 
+email  OK
 
-tamanho de roupa
+tamanho de roupa OK
 
 
 
@@ -40,3 +40,6 @@ funções extra:
 
 Backup do BD/Sincronia conta
 
+
+
+ARRUMAR CHAMADA, QUANDO MUDA O EVENTO CONTINUA MARCADO

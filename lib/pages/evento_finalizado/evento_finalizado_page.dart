@@ -1,18 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:partilhe/app.router.dart';
-import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:partilhe/pages/evento/stores/evento_store.dart';
-import 'package:partilhe/pages/evento/widgets/bota_finalizar_evento.dart';
-import 'package:partilhe/pages/evento/widgets/botao_chamada.dart';
-import 'package:partilhe/routes/rotas.dart';
+import 'package:partilhe/pages/evento_finalizado/widgets/botao_chamada.dart';
 
-class EventoPage extends StatelessWidget {
+class EventoFinalizadoPage extends StatelessWidget {
   final EventoStore evento;
-  EventoPage({this.evento});
+  EventoFinalizadoPage({this.evento});
 
   final _nomeFocus = FocusNode();
   final _responsavelFocus = FocusNode();
@@ -27,15 +22,6 @@ class EventoPage extends StatelessWidget {
           backgroundColor: Theme.of(context).primaryColor,
           title: Text(evento.nome == '' ? "Novo Evento" : evento.nome),
           centerTitle: true,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await evento.salvar();
-            AppRouter.gotoPop();
-          },
-          child: Icon(Icons.save),
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
         body: SingleChildScrollView(
             padding: EdgeInsets.all(10.0),
@@ -55,28 +41,24 @@ class EventoPage extends StatelessWidget {
                       ),
                     );
                   }),
-                  onTap: () {
-                    ImagePicker()
-                        .pickImage(source: ImageSource.gallery)
-                        .then((file) {
-                      if (file == null) return;
-                      evento.imagem = file.path;
-                    });
-                  },
+                  onTap: () {},
                 ),
                 TextFormField(
+                  enabled: false,
                   initialValue: evento.nome,
                   focusNode: _nomeFocus,
                   decoration: InputDecoration(labelText: "Nome"),
                   onChanged: (text) => evento.nome = text,
                 ),
                 TextFormField(
+                  enabled: false,
                   initialValue: evento.responsavel,
                   focusNode: _responsavelFocus,
                   decoration: InputDecoration(labelText: "Nome do Responsável"),
                   onChanged: (text) => evento.responsavel = text,
                 ),
                 TextFormField(
+                  enabled: false,
                   initialValue: evento.descricao,
                   focusNode: _descricaoFocus,
                   decoration: InputDecoration(labelText: "Descrição"),
@@ -85,26 +67,7 @@ class EventoPage extends StatelessWidget {
                 Container(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () {
-                      showDatePicker(
-                        context: context,
-                        initialDate: evento.data?.toDateTime ?? DateTime.now(),
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2030),
-                        fieldLabelText: 'Vencimento',
-                        builder: (BuildContext context, Widget child) {
-                          return Theme(
-                            data: ThemeData.light(),
-                            child: child,
-                          );
-                        },
-                      ).then((value) {
-                        if (value != null && evento.data?.toDateTime != value) {
-                          evento.data = DateTimeValueObject.fromDate(value,
-                              withoutTime: true);
-                        }
-                      });
-                    },
+                    onTap: () {},
                     child: Container(
                       width: screenSize.width * .5,
                       child: Card(
@@ -137,7 +100,6 @@ class EventoPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 BotaoChamada(evento),
-                BotaoFinalizarEvento(evento),
               ],
             )));
   }

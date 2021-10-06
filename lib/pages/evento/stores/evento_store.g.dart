@@ -121,6 +121,13 @@ mixin _$EventoStore on _EventoStoreBase, Store {
     return _$salvarAsyncAction.run(() => super.salvar());
   }
 
+  final _$finalizarAsyncAction = AsyncAction('_EventoStoreBase.finalizar');
+
+  @override
+  Future<void> finalizar(int id) {
+    return _$finalizarAsyncAction.run(() => super.finalizar(id));
+  }
+
   @override
   String toString() {
     return '''

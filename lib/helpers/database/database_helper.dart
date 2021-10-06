@@ -13,6 +13,8 @@ import 'package:partilhe/models/produto.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'package:meta/meta.dart';
+
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper;
   static Database _database;
@@ -62,14 +64,6 @@ class DatabaseHelper {
           'ALTER TABLE $eventoTable ADD COLUMN $colAtivo BOOLEAN NULL');
     }
   }
-
-  //Incluir um objeto cadastro no banco de dados
-  // Future<int> insertCadastro(Cadastro cadastro) async {
-  //   Database db = await this.database;
-
-  //   var resultado = await db.insert(cadastroTable, cadastro.toMap());
-  //   return resultado;
-  // }
 
   Future mergeCadastro(Cadastro cadastro) async {
     Database db = await this.database;
@@ -130,16 +124,6 @@ class DatabaseHelper {
 
     return lista;
   }
-
-  //Atualiza o objeto Cadastro e salva no banco de dados
-  // Future<int> updateCadastro(Cadastro cadastro) async {
-  //   var db = await this.database;
-
-  //   var resultado = await db.update(cadastroTable, cadastro.toMap(),
-  //       where: '$colId = ?', whereArgs: [cadastro.id]);
-
-  //   return resultado;
-  // }
 
   //Deleta um objeto Cadastro do banco de dados
   Future<int> deleteCadastro(String id) async {
@@ -260,11 +244,16 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Evento>> getEventos() async {
+  Future<List<Evento>> getEventos({@required bool ativo}) async {
     Database db = await this.database;
 
-    var resultado = await db.query(eventoTable);
+    final sql = '''
+      SELECT id, nome, responsavel, descricao, data, imagem, ativo
+        FROM evento 
+        WHERE ativo = ${ativo ? 1 : 0}
+    ''';
 
+    final resultado = await db.rawQuery(sql);
     List<Evento> lista = resultado.isNotEmpty
         ? resultado.map((c) => Evento.fromMap(c)).toList()
         : [];
@@ -278,6 +267,15 @@ class DatabaseHelper {
 
     var resultado = await db.update(eventoTable, evento.toMap(),
         where: '$colId = ?', whereArgs: [evento.id]);
+
+    return resultado;
+  }
+
+  Future<void> finalizarEvento(int id) async {
+    var db = await this.database;
+
+    var resultado =
+        await db.execute('UPDATE evento SET ativo = 0 WHERE id = ?', [id]);
 
     return resultado;
   }
