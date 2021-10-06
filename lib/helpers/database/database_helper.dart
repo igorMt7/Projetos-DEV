@@ -300,6 +300,7 @@ class DatabaseHelper {
     return resultado;
   }
 
+//CHAMADA
   Future<bool> insertChamada(List<Chamada> chamada) async {
     final sql = 'INSERT OR REPLACE INTO chamadas (cpf, IdEvento) VALUES (?, ?)';
     try {
@@ -321,6 +322,29 @@ class DatabaseHelper {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<List<String>> getChamada(int idEvento) async {
+    final sql = 'SELECT cpf FROM chamadas WHERE idEvento = $idEvento';
+    try {
+      Database db = await this.database;
+      final resultado = await db.rawQuery(sql);
+
+      List<String> lista = [];
+
+      if (resultado.isNotEmpty) {
+        resultado.forEach((e) {
+          lista.add(e['cpf'].toString());
+        });
+      }
+      return lista;
+    } on DatabaseException catch (e) {
+      print(e);
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 

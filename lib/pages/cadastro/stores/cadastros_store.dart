@@ -22,6 +22,8 @@ abstract class _CadastrosStoreBase with Store {
 
   @action
   Future<List<Cadastro>> iniciar() async {
+    cadastros = ObservableList<CadastroStore>();
+
     final response = await _db.getCadastros();
     if (response != null) {
       response.forEach((e) {

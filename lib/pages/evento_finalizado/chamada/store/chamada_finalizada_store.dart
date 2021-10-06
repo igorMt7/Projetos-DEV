@@ -1,14 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:partilhe/helpers/database/database_helper.dart';
-import 'package:partilhe/models/chamada.dart';
 import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
+part 'chamada_finalizada_store.g.dart';
 
-part 'chamada_store.g.dart';
+class ChamadaFinalizadaStore = _ChamadaFinalizadaStoreBase
+    with _$ChamadaFinalizadaStore;
 
-class ChamadaStore = _ChamadaStoreBase with _$ChamadaStore;
-
-abstract class _ChamadaStoreBase with Store {
+abstract class _ChamadaFinalizadaStoreBase with Store {
   final _db = GetIt.I<DatabaseHelper>();
   final cadastrosStore = GetIt.I<CadastrosStore>();
 
@@ -27,22 +26,5 @@ abstract class _ChamadaStoreBase with Store {
     }
 
     return true;
-  }
-
-  @action
-  Future<bool> salvarChamada(int idEvento) async {
-    List<Chamada> listaPresentes = [];
-
-    if (cadastrosStore.cadastros.isNotEmpty) {
-      cadastrosStore.cadastros.forEach((e) {
-        if (e.isChecked) listaPresentes.add(Chamada(e.cpf, idEvento));
-      });
-    }
-
-    if (listaPresentes.isNotEmpty) {
-      return await _db.insertChamada(listaPresentes);
-    }
-
-    return false;
   }
 }
