@@ -146,7 +146,7 @@ class Dashboard extends StatelessWidget {
                 child: Material(
                   child: InkWell(
                     onTap: () {
-                      AppRouter.gotoPush(nomeRota: rotaListaCadastros);
+                      AppRouter.gotoPush(nomeRota: rotaRelatorios);
                     },
                     child: Container(
                       decoration: new BoxDecoration(

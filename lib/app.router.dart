@@ -11,6 +11,7 @@ import 'package:partilhe/pages/evento_finalizado/evento_finalizado_page.dart';
 import 'package:partilhe/pages/evento_finalizado/evento_finalizados_lista.dart';
 import 'package:partilhe/pages/produto/produto_lista.dart';
 import 'package:partilhe/pages/produto/produto_page.dart';
+import 'package:partilhe/pages/relatorios/relatorios.dart';
 import 'package:partilhe/routes/rotas.dart';
 
 class AppRouter {
@@ -42,6 +43,9 @@ class AppRouter {
         chaveDeNavegacao.currentState.pushNamed(nomeRota);
         break;
       case rotaChamada:
+        chaveDeNavegacao.currentState.pushNamed(nomeRota);
+        break;
+      case rotaRelatorios:
         chaveDeNavegacao.currentState.pushNamed(nomeRota);
         break;
       default:
@@ -108,6 +112,10 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) =>
               ChamadaEventoFinalizado(idEvento: configuracoes.arguments),
+        );
+      case rotaRelatorios:
+        return MaterialPageRoute(
+          builder: (_) => Relatorios(),
         );
       default:
         return MaterialPageRoute(

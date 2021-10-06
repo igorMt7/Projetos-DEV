@@ -11,3 +11,4 @@ const rotaEventoFinalizado =
     '/dashboard/lista-eventos/evento/eventos-finalizados/evento-finalizado';
 const rotaChamadaFinalizada =
     '/dashboard/lista-eventos/eventos-finalizados/evento-finalizado/chamada-finalizada';
+const rotaRelatorios = '/dashboard/relatorios';
