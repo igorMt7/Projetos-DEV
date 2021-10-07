@@ -6,10 +6,12 @@ import 'package:partilhe/helpers/database/tabelas/campos_tabelas.dart';
 import 'package:partilhe/helpers/database/tabelas/chamadas.dart';
 import 'package:partilhe/helpers/database/tabelas/evento.dart';
 import 'package:partilhe/helpers/database/tabelas/produto.dart';
+import 'package:partilhe/helpers/enums/tipo_frequencia.dart';
 import 'package:partilhe/models/cadastro.dart';
 import 'package:partilhe/models/chamada.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:partilhe/models/produto.dart';
+import 'package:partilhe/models/relatorios/maior_frequencia.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -336,6 +338,38 @@ class DatabaseHelper {
       if (resultado.isNotEmpty) {
         resultado.forEach((e) {
           lista.add(e['cpf'].toString());
+        });
+      }
+      return lista;
+    } on DatabaseException catch (e) {
+      print(e);
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<List<RelatorioFrequencia>> getFrequencia(TIPO_FREQUENCIA tipo) async {
+    Database db = await this.database;
+    final ordem = tipo == TIPO_FREQUENCIA.MAIOR ? 'DESC' : 'ASC';
+
+    final sql = '''
+        SELECT c.cpf, c.nome, COUNT(cm.idevento) frequencia
+        FROM cadastro c
+            LEFT JOIN chamadas cm ON cm.cpf = c.cpf
+          GROUP BY c.nome, c.cpf 
+          ORDER BY frequencia $ordem
+      LIMIT 30
+    ''';
+
+    List<RelatorioFrequencia> lista = [];
+
+    try {
+      final resultado = await db.rawQuery(sql);
+      if (resultado.isNotEmpty) {
+        resultado.forEach((e) {
+          lista.add(RelatorioFrequencia.fromMap(e));
         });
       }
       return lista;

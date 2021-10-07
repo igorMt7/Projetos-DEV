@@ -20,7 +20,7 @@ tamanho de roupa OK
 
 2 - Relatórios básicos:
 
-Maior frequência/Menor frequência (evento)
+Maior frequência/Menor frequência (evento) (OK)
 
 Numero de dependentes.
 
@@ -41,5 +41,5 @@ funções extra:
 Backup do BD/Sincronia conta
 
 
-
-ARRUMAR CHAMADA, QUANDO MUDA O EVENTO CONTINUA MARCADO
+Primeira vez que abre vem duplicada aa lista de chamda (OK)
+ARRUMAR CHAMADA, QUANDO MUDA O EVENTO CONTINUA MARCADO (OK)

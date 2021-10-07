@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:partilhe/helpers/enums/tipo_frequencia.dart';
 import 'package:partilhe/pages/relatorios/stores/relatorios_store.dart';
 
 class Relatorios extends StatelessWidget {
@@ -20,9 +21,19 @@ class Relatorios extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await store.maiorFrequencia();
+                  await store.frequencia(TIPO_FREQUENCIA.MAIOR);
                 },
                 child: const Text('Relatório de maior frequência'),
+              ),
+            ),
+            Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await store.frequencia(TIPO_FREQUENCIA.MENOR);
+                },
+                child: const Text('Relatório de menor frequência'),
               ),
             ),
           ],

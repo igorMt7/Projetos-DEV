@@ -20,6 +20,7 @@ abstract class _EventosFinalizadosStoreBase with Store {
 
   @action
   Future<List<Evento>> iniciar() async {
+    eventos = ObservableList<EventoStore>();
     final response = await _db.getEventos(ativo: false);
     if (response != null) {
       response.forEach((e) {

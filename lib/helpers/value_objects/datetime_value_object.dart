@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class DateTimeValueObject {
   static final dateFormat = DateFormat('dd/MM/yyyy');
-  static final dateFormat2 = DateFormat('dd/MM/yy');
+  static final dateFormat2 = DateFormat('dd-MM-yy');
   static final _dateFormatDMYHM = DateFormat('dd/MM/yyyy').add_jm();
   static final _dateFormatDMYHMSMs = DateFormat('dd/MM/yyyy HH:mm:ss.SSS');
   static final _dateFormatDataBase = DateFormat('yyyy-MM-ddTHH:mm:ss.SSS');

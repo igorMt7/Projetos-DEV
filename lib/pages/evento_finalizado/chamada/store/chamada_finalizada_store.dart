@@ -13,8 +13,6 @@ abstract class _ChamadaFinalizadaStoreBase with Store {
 
   @action
   Future<bool> iniciarChamada(int idEvento) async {
-    await cadastrosStore.iniciar();
-
     final chamada = await _db.getChamada(idEvento);
     if (chamada.isNotEmpty) {
       chamada.forEach((chamada) {
@@ -23,6 +21,8 @@ abstract class _ChamadaFinalizadaStoreBase with Store {
             orElse: () => null);
         if (cadastro != null) cadastro.isChecked = true;
       });
+    } else {
+      await cadastrosStore.iniciar();
     }
 
     return true;
