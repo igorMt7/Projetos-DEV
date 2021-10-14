@@ -22,11 +22,11 @@ tamanho de roupa OK
 
 Maior frequência/Menor frequência (evento) (OK)
 
-Numero de dependentes.
+Numero de dependentes. (OK)
 
 Média de presentes.
 
-Ordenado por tamanho de roupa
+Ordenado por tamanho de roupa (OK)
 
 
 3 - Sugestão
