@@ -5,28 +5,25 @@ import 'package:partilhe/helpers/enums/tipo_frequencia.dart';
 import 'package:partilhe/helpers/value_objects/datetime_value_object.dart';
 import 'package:partilhe/local/path_provider/app_path.dart';
 import 'package:partilhe/models/relatorios/frequencia.dart';
+import 'package:partilhe/pages/cadastro/stores/cadastro_store.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class PDFRelatorioFrequencia {
+class PDFRelatorioDependentes {
   static Future<void> criarESalvar({
-    @required List<RelatorioFrequencia> listaFrequencia,
+    @required List<CadastroStore> cadastros,
     @required String fileName,
-    @required TIPO_FREQUENCIA tipo,
   }) async {
     final _basePath = await AppPath.internalAppDocsPath();
     final _path = AppPath.joinPath(pathSnippets: [_basePath, fileName]);
     final file = File(_path);
 
-    final pdf = _gerarPdf(listaFrequencia, tipo);
+    final pdf = _gerarPdf(cadastros);
     await file.writeAsBytes(await pdf.save());
   }
 
-  static pw.Document _gerarPdf(
-    List<RelatorioFrequencia> listaFrequencia,
-    TIPO_FREQUENCIA tipo,
-  ) {
+  static pw.Document _gerarPdf(List<CadastroStore> cadastros) {
     final _data = DateTimeValueObject.now().toShortStringDateTime;
     final pdf = pw.Document();
 
@@ -46,12 +43,11 @@ class PDFRelatorioFrequencia {
             pw.Container(
               padding: const pw.EdgeInsets.symmetric(vertical: 8.0),
               alignment: pw.Alignment.centerLeft,
-              child: pw.Text(
-                  '${tipo == TIPO_FREQUENCIA.MAIOR ? 'Relatório 30 maiores frequências' : 'Relatório 30 menores frequências'}'),
+              child: pw.Text('Relatório número de dependentes'),
             ),
             _linha(),
             _cabecalhosLista(),
-            _listaFrequencia(listaFrequencia),
+            _listaCadastros(cadastros),
           ];
         },
       ),
@@ -84,7 +80,7 @@ class PDFRelatorioFrequencia {
           flex: 1,
           child: pw.Container(
             alignment: pw.Alignment.center,
-            child: pw.Text('FREQUÊNCIA',
+            child: pw.Text('DEPENDENTES',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
         ),
@@ -92,10 +88,10 @@ class PDFRelatorioFrequencia {
     );
   }
 
-  static pw.Widget _listaFrequencia(List<RelatorioFrequencia> listaFrequencia) {
+  static pw.Widget _listaCadastros(List<CadastroStore> cadastros) {
     List<pw.Widget> _linhas = [];
 
-    listaFrequencia?.forEach((cadastro) {
+    cadastros?.forEach((cadastro) {
       _linhas.add(
         pw.Padding(
           padding: const pw.EdgeInsets.all(4.0),
@@ -118,7 +114,7 @@ class PDFRelatorioFrequencia {
               flex: 1,
               child: pw.Container(
                 alignment: pw.Alignment.center,
-                child: pw.Text(cadastro.frequencia?.toString() ?? 'N/D'),
+                child: pw.Text(cadastro.dependentes?.toString() ?? 'N/D'),
               ),
             ),
           ]),

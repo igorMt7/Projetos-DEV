@@ -11,7 +11,7 @@ import 'package:partilhe/models/cadastro.dart';
 import 'package:partilhe/models/chamada.dart';
 import 'package:partilhe/models/evento.dart';
 import 'package:partilhe/models/produto.dart';
-import 'package:partilhe/models/relatorios/maior_frequencia.dart';
+import 'package:partilhe/models/relatorios/frequencia.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -360,7 +360,7 @@ class DatabaseHelper {
             LEFT JOIN chamadas cm ON cm.cpf = c.cpf
           GROUP BY c.nome, c.cpf 
           ORDER BY frequencia $ordem
-      LIMIT 30
+        LIMIT 30
     ''';
 
     List<RelatorioFrequencia> lista = [];
