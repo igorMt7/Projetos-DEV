@@ -56,6 +56,16 @@ class Relatorios extends StatelessWidget {
                 child: const Text('Relatório tamanho de roupa'),
               ),
             ),
+            Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await store.mediaPresencaEventos();
+                },
+                child: const Text('Média de presença (eventos)'),
+              ),
+            ),
           ],
         ),
       ),

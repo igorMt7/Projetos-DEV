@@ -382,6 +382,31 @@ class DatabaseHelper {
     }
   }
 
+  Future<double> getMediaEvento() async {
+    Database db = await this.database;
+
+    final sql = ''' 
+      SELECT (CAST(COUNT(1) As float) / CAST(eventos As float)) as media_presencas_total
+      FROM chamadas
+        INNER JOIN (SELECT COUNT(1) as eventos FROM evento)
+    ''';
+
+    try {
+      final resultado = await db.rawQuery(sql);
+      if (resultado.isNotEmpty) {
+        final media = resultado.first['media_presencas_total'];
+        return media;
+      }
+      return null;
+    } on DatabaseException catch (e) {
+      print(e);
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   Future close() async {
     Database db = await this.database;
     db.close();

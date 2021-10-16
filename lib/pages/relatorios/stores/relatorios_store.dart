@@ -7,6 +7,7 @@ import 'package:partilhe/local/path_provider/app_path.dart';
 import 'package:partilhe/pages/cadastro/stores/cadastros_store.dart';
 import 'package:partilhe/pages/relatorios/relatorio-pdf/dependentes/relatorio-dependentes.dart';
 import 'package:partilhe/pages/relatorios/relatorio-pdf/frequencia/relatorio-frequencia.dart';
+import 'package:partilhe/pages/relatorios/relatorio-pdf/media_presenca_eventos/media_presenca_eventos.dart';
 import 'package:partilhe/pages/relatorios/relatorio-pdf/tamanho_roupa/tamanho_roupa.dart';
 import 'package:share/share.dart';
 part 'relatorios_store.g.dart';
@@ -67,6 +68,23 @@ abstract class _RelatoriosStoreBase with Store {
 
       await PDFRelatorioTamanhoRoupa.criarESalvar(
           cadastros: cadastros.toList(), fileName: _fileName);
+      await Share.shareFiles([_path]);
+    }
+  }
+
+  Future mediaPresencaEventos() async {
+    final media = await _db.getMediaEvento();
+
+    if (media != null) {
+      final _pathBase = await AppPath.internalAppDocsPath();
+      final _fileName = 'relatorio_media_presenca_eventos_$_data.pdf';
+
+      final _path = AppPath.joinPath(pathSnippets: [_pathBase, _fileName]);
+
+      await PDFRelatorioMediaPresencaEventos.criarESalvar(
+        media: media,
+        fileName: _fileName,
+      );
       await Share.shareFiles([_path]);
     }
   }
